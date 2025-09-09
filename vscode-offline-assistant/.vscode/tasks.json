@@ -1,0 +1,34 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "type": "shell",
+      "command": "npm run compile",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "watch",
+      "type": "shell",
+      "command": "npm run watch",
+      "group": "build",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "typescript",
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "pattern": [
+          {
+            "regexp": "^\\s*([\\w\\d\\-\\.]+)\\s*\\((\\d+)\\)\\s*:\\s*(.*)$",
+            "file": 1,
+            "line": 2,
+            "message": 3
+          }
+        ]
+      }
+    }
+  ]
+}
