@@ -206,7 +206,7 @@ The extension automatically detects and analyzes your workspace, but you can cus
 
 ## 📄 License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+Apache License 2.0 - see [LICENSE](LICENSE) file for details.
 
 ---
 
@@ -352,7 +352,7 @@ npm test
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
 
 ```
-Copyright 2025 MD Hammad Uddin
+Copyright 2025 Md Hammaduddin
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
