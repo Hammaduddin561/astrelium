@@ -139,10 +139,11 @@ Context: ${enhancedPrompt}
 Respond directly and efficiently.`,
                                     stream: false,
                                     options: {
-                                        temperature: 0.3,
-                                        top_p: 0.7,
-                                        num_predict: 1024,
-                                        num_ctx: 4096
+                                        temperature: 0.2,
+                                        top_p: 0.8,
+                                        num_predict: 512,
+                                        num_ctx: 2048,
+                                        stop: ["User:", "Human:", "\n\n\n"]
                                     }
                                 })
                             });
@@ -1084,38 +1085,138 @@ Respond directly and efficiently.`,
     private getCurrentFileContext(): string {
         const activeEditor = vscode.window.activeTextEditor;
         if (!activeEditor) {
-            return '';
+            return '\n\n=== NO FILE OPEN ===\nNo file is currently open in the editor.\n';
         }
 
         const fileName = path.basename(activeEditor.document.fileName);
+        const fullPath = activeEditor.document.fileName;
         const fileContent = activeEditor.document.getText();
         const language = activeEditor.document.languageId;
         const lineCount = activeEditor.document.lineCount;
         const selection = activeEditor.selection;
+        const cursorPosition = activeEditor.selection.active;
         
         let context = `\n\n=== CURRENT FILE CONTEXT ===\n`;
         context += `File: ${fileName}\n`;
+        context += `Full Path: ${fullPath}\n`;
         context += `Language: ${language}\n`;
         context += `Lines: ${lineCount}\n`;
+        context += `Cursor Position: Line ${cursorPosition.line + 1}, Column ${cursorPosition.character + 1}\n`;
+        
+        // Check if file is modified
+        if (activeEditor.document.isDirty) {
+            context += `Status: ⚠️ File has unsaved changes\n`;
+        } else {
+            context += `Status: ✅ File is saved\n`;
+        }
+        
+        // Analyze file structure
+        const imports = this.extractImports(fileContent, language);
+        const functions = this.extractFunctions(fileContent, language);
+        const classes = this.extractClasses(fileContent, language);
+        
+        if (imports.length > 0) {
+            context += `Imports: ${imports.slice(0, 5).join(', ')}${imports.length > 5 ? ` (and ${imports.length - 5} more)` : ''}\n`;
+        }
+        
+        if (functions.length > 0) {
+            context += `Functions: ${functions.slice(0, 5).join(', ')}${functions.length > 5 ? ` (and ${functions.length - 5} more)` : ''}\n`;
+        }
+        
+        if (classes.length > 0) {
+            context += `Classes: ${classes.slice(0, 3).join(', ')}${classes.length > 3 ? ` (and ${classes.length - 3} more)` : ''}\n`;
+        }
         
         if (!selection.isEmpty) {
             const selectedText = activeEditor.document.getText(selection);
-            context += `Selected Text (lines ${selection.start.line + 1}-${selection.end.line + 1}):\n${selectedText}\n\n`;
+            context += `\nSelected Text (lines ${selection.start.line + 1}-${selection.end.line + 1}):\n\`\`\`${language}\n${selectedText}\n\`\`\`\n`;
         }
         
-        // Include full file content if it's not too long
-        if (fileContent.length < 10000) {
-            context += `Full File Content:\n${fileContent}\n`;
+        // Include relevant file content
+        if (fileContent.length < 8000) {
+            context += `\nFull File Content:\n\`\`\`${language}\n${fileContent}\n\`\`\`\n`;
         } else {
-            // For large files, include first and last parts
+            // For large files, include context around cursor
             const lines = fileContent.split('\n');
-            const firstPart = lines.slice(0, 50).join('\n');
-            const lastPart = lines.slice(-20).join('\n');
-            context += `File Content (first 50 lines):\n${firstPart}\n\n...(file truncated)...\n\n`;
-            context += `File Content (last 20 lines):\n${lastPart}\n`;
+            const cursorLine = cursorPosition.line;
+            const startLine = Math.max(0, cursorLine - 25);
+            const endLine = Math.min(lines.length, cursorLine + 25);
+            const contextLines = lines.slice(startLine, endLine);
+            
+            context += `\nFile Content (around cursor, lines ${startLine + 1}-${endLine}):\n\`\`\`${language}\n${contextLines.join('\n')}\n\`\`\`\n`;
+            
+            if (startLine > 0) {
+                context += `\n(File continues above...)\n`;
+            }
+            if (endLine < lines.length) {
+                context += `\n(File continues below...)\n`;
+            }
         }
         
         return context;
+    }
+
+    // Helper methods for code analysis
+    private extractImports(content: string, language: string): string[] {
+        const imports: string[] = [];
+        const lines = content.split('\n');
+        
+        for (const line of lines.slice(0, 50)) { // Check first 50 lines
+            const trimmed = line.trim();
+            if (language === 'typescript' || language === 'javascript') {
+                if (trimmed.startsWith('import ') && trimmed.includes('from')) {
+                    const match = trimmed.match(/from\s+['"`]([^'"`]+)['"`]/);
+                    if (match) imports.push(match[1]);
+                } else if (trimmed.startsWith('const ') && trimmed.includes('require(')) {
+                    const match = trimmed.match(/require\(['"`]([^'"`]+)['"`]\)/);
+                    if (match) imports.push(match[1]);
+                }
+            } else if (language === 'python') {
+                if (trimmed.startsWith('import ') || trimmed.startsWith('from ')) {
+                    imports.push(trimmed.replace(/^(import|from)\s+/, '').split(' ')[0]);
+                }
+            }
+        }
+        
+        return [...new Set(imports)]; // Remove duplicates
+    }
+
+    private extractFunctions(content: string, language: string): string[] {
+        const functions: string[] = [];
+        const lines = content.split('\n');
+        
+        for (const line of lines) {
+            const trimmed = line.trim();
+            if (language === 'typescript' || language === 'javascript') {
+                const funcMatch = trimmed.match(/^(?:export\s+)?(?:async\s+)?function\s+(\w+)/);
+                const arrowMatch = trimmed.match(/^(?:export\s+)?(?:const|let|var)\s+(\w+)\s*=\s*(?:async\s+)?\(/);
+                if (funcMatch) functions.push(funcMatch[1]);
+                if (arrowMatch) functions.push(arrowMatch[1]);
+            } else if (language === 'python') {
+                const match = trimmed.match(/^def\s+(\w+)/);
+                if (match) functions.push(match[1]);
+            }
+        }
+        
+        return functions;
+    }
+
+    private extractClasses(content: string, language: string): string[] {
+        const classes: string[] = [];
+        const lines = content.split('\n');
+        
+        for (const line of lines) {
+            const trimmed = line.trim();
+            if (language === 'typescript' || language === 'javascript') {
+                const match = trimmed.match(/^(?:export\s+)?class\s+(\w+)/);
+                if (match) classes.push(match[1]);
+            } else if (language === 'python') {
+                const match = trimmed.match(/^class\s+(\w+)/);
+                if (match) classes.push(match[1]);
+            }
+        }
+        
+        return classes;
     }
 
     // Enhanced message handling with advanced functions
@@ -2155,6 +2256,15 @@ Provide a specific solution to fix this error. If it's a code issue, provide the
                         background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 235, 59, 0.1) 100%);
                         border: 1px solid rgba(255, 193, 7, 0.3);
                     }
+                    .typing-cursor {
+                        animation: blink 1s infinite;
+                        color: rgba(102, 126, 234, 0.8);
+                        font-weight: bold;
+                    }
+                    @keyframes blink {
+                        0%, 50% { opacity: 1; }
+                        51%, 100% { opacity: 0; }
+                    }
                     .message {
                         animation: slideIn 0.3s ease-out;
                         margin-bottom: 12px;
@@ -2401,7 +2511,7 @@ Provide a specific solution to fix this error. If it's a code issue, provide the
                         e.target.value = '';
                     });
 
-                    function addMessage(sender, message, type) {
+                    function addMessage(sender, message, type, useTyping = false) {
                         const messageElement = document.createElement('div');
                         messageElement.className = 'message ' + type;
                         
@@ -2409,25 +2519,96 @@ Provide a specific solution to fix this error. If it's a code issue, provide the
                         headerElement.className = 'message-header';
                         
                         if (type === 'user') {
-                            headerElement.style.color = 'rgba(102, 126, 234, 0.8)';
-                            headerElement.textContent = '👤 You';
+                            headerElement.innerHTML = '👤 <span style="color: rgba(102, 126, 234, 0.8);">You</span>';
                         } else if (type === 'ai') {
-                            headerElement.style.color = 'rgba(118, 75, 162, 0.8)';
-                            headerElement.textContent = '🤖 Astrelium';
+                            headerElement.innerHTML = '🤖 <span style="color: rgba(118, 75, 162, 0.8);">Astrelium</span>';
                         } else {
-                            headerElement.style.color = 'rgba(86, 171, 47, 0.8)';
-                            headerElement.textContent = '⚙️ System';
+                            headerElement.innerHTML = '⚙️ <span style="color: rgba(86, 171, 47, 0.8);">System</span>';
                         }
                         
                         const contentElement = document.createElement('div');
                         contentElement.className = 'message-content';
-                        const formattedMessage = type === 'ai' ? parseMarkdown(message) : message;
-                        contentElement.innerHTML = formattedMessage;
                         
                         messageElement.appendChild(headerElement);
                         messageElement.appendChild(contentElement);
                         chatContainer.appendChild(messageElement);
+                        
+                        if (useTyping && type === 'ai') {
+                            // Add typing animation for AI responses
+                            typeText(contentElement, message);
+                        } else {
+                            const formattedMessage = type === 'ai' ? parseMarkdown(message) : message;
+                            contentElement.innerHTML = formattedMessage;
+                        }
+                        
                         chatContainer.scrollTop = chatContainer.scrollHeight;
+                        return messageElement;
+                    }
+                    
+                    function typeText(element, text, speed = 30) {
+                        element.innerHTML = '';
+                        let i = 0;
+                        const formattedText = parseMarkdown(text);
+                        
+                        // Create a temporary element to get plain text from HTML
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = formattedText;
+                        const plainText = tempDiv.textContent || tempDiv.innerText || '';
+                        
+                        function typeChar() {
+                            if (i < plainText.length) {
+                                // Calculate how much text to show
+                                const currentText = plainText.substring(0, i + 1);
+                                
+                                // Find the corresponding HTML by matching text length
+                                const tempDiv2 = document.createElement('div');
+                                tempDiv2.innerHTML = formattedText;
+                                const walker = document.createTreeWalker(
+                                    tempDiv2,
+                                    NodeFilter.SHOW_TEXT,
+                                    null,
+                                    false
+                                );
+                                
+                                let charCount = 0;
+                                let lastNode = null;
+                                while (walker.nextNode()) {
+                                    const node = walker.currentNode;
+                                    if (charCount + node.textContent.length >= i + 1) {
+                                        // Truncate this text node
+                                        const truncateAt = (i + 1) - charCount;
+                                        node.textContent = node.textContent.substring(0, truncateAt);
+                                        break;
+                                    }
+                                    charCount += node.textContent.length;
+                                    lastNode = node;
+                                }
+                                
+                                // Remove any remaining nodes
+                                const allNodes = tempDiv2.querySelectorAll('*');
+                                let shouldRemove = false;
+                                for (let node of allNodes) {
+                                    if (shouldRemove) {
+                                        node.remove();
+                                    }
+                                    if (node.contains(walker.currentNode)) {
+                                        shouldRemove = true;
+                                    }
+                                }
+                                
+                                element.innerHTML = tempDiv2.innerHTML + '<span class="typing-cursor">|</span>';
+                                i++;
+                                
+                                chatContainer.scrollTop = chatContainer.scrollHeight;
+                                setTimeout(typeChar, speed + Math.random() * 20);
+                            } else {
+                                // Typing complete
+                                element.innerHTML = formattedText;
+                                chatContainer.scrollTop = chatContainer.scrollHeight;
+                            }
+                        }
+                        
+                        typeChar();
                     }
 
                     async function sendMessage() {
@@ -2585,8 +2766,8 @@ Provide a specific solution to fix this error. If it's a code issue, provide the
                                 currentTypingMessage = null;
                             }
                             
-                            // Add message with typing effect
-                            addMessage('Astrelium', message.text, 'ai');
+                            // Add message with typing effect for better UX
+                            addMessage('Astrelium', message.text, 'ai', true);
                         }
                     });
                 </script>
