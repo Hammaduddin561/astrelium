@@ -115,37 +115,34 @@ class ChatViewProvider implements vscode.WebviewViewProvider {
                                 enhancedPrompt = `${contextInfo}\n\n=== USER REQUEST ===\n${message.text}`;
                             }
                             
+                            // Show thinking indicator
+                            webviewView.webview.postMessage({ 
+                                type: 'thinking', 
+                                text: '🤔 Analyzing your request...'
+                            });
+
                             const response = await fetch('http://localhost:11434/api/generate', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({
                                     model: 'gpt-oss:20b',
-                                    prompt: `You are Astrelium, an intelligent coding assistant that can create, compile, test, and debug code automatically.
+                                    prompt: `You are Astrelium, an intelligent coding assistant. Be concise and helpful.
 
-${isCodeRequest ? `IMPORTANT: This is a code creation request. You must:
-1. Create the necessary files with proper code
-2. Provide clear file paths and code content
-3. Include compilation/run instructions
-4. Format your response as:
-   
-   **Creating Project Files:**
-   
-   FILE: filename.ext
-   \`\`\`language
-   code content here
-   \`\`\`
-   
-   COMPILE: compilation command (if needed)
-   RUN: run command
-   TEST: test command (if applicable)
-   
-   Then explain what the code does.` : ''}
+${isCodeRequest ? `TASK: Code modification/creation request.
+- Read current file context carefully  
+- Provide specific, working code
+- Use format: FILE: filename.ext with code blocks
+- Include brief explanations` : ''}
 
-User: ${enhancedPrompt}`,
+Context: ${enhancedPrompt}
+
+Respond directly and efficiently.`,
                                     stream: false,
                                     options: {
-                                        temperature: 0.7,
-                                        num_predict: 1500
+                                        temperature: 0.3,
+                                        top_p: 0.7,
+                                        num_predict: 1024,
+                                        num_ctx: 4096
                                     }
                                 })
                             });
@@ -153,6 +150,12 @@ User: ${enhancedPrompt}`,
                             if (response.ok) {
                                 const data = await response.json() as any;
                                 const reply = data.response || 'No response received';
+                                
+                                // Complete the response
+                                webviewView.webview.postMessage({ 
+                                    type: 'complete_response',
+                                    text: reply
+                                });
                                 
                                 // Save AI response to history
                                 this.addToHistory('assistant', reply);
@@ -1263,27 +1266,18 @@ User: ${enhancedPrompt}`,
             'project', 'app', 'application', 'website', 'script', 'program',
             'function', 'class', 'component', 'module', 'file', 'folder',
             'python', 'javascript', 'typescript', 'html', 'css', 'java', 'cpp', 'c++',
-            'react', 'node', 'express', 'flask', 'django', 'vue', 'angular', 'api'
+            'react', 'node', 'express', 'flask', 'django', 'vue', 'angular', 'api',
+            'add', 'insert', 'modify', 'update', 'fix', 'implement', 'refactor'
         ];
-        
-        const actionKeywords = ['create', 'make', 'build', 'write', 'generate', 'develop', 'code'];
         
         const lowerText = text.toLowerCase();
         
-        // Check for explicit code requests
-        const hasAction = actionKeywords.some(keyword => lowerText.includes(keyword));
-        const hasCodeContext = codeKeywords.some(keyword => lowerText.includes(keyword));
-        
-        // Also check for common patterns
-        const patterns = [
-            /create.*app/i,
-            /make.*program/i,
-            /build.*project/i,
-            /write.*code/i,
-            /generate.*file/i,
-            /develop.*application/i,
+        // Check for explicit code modification requests
+        const fileModificationPatterns = [
             /add.*function/i,
             /add.*method/i,
+            /add.*class/i,
+            /add.*variable/i,
             /modify.*file/i,
             /update.*code/i,
             /fix.*bug/i,
@@ -1293,12 +1287,35 @@ User: ${enhancedPrompt}`,
             /create.*function/i,
             /write.*function/i,
             /add.*display/i,
-            /in.*this.*file/i
+            /in this file/i,
+            /to this file/i,
+            /current file/i,
+            /this code/i,
+            /refactor.*code/i,
+            /improve.*code/i,
+            /optimize.*code/i,
+            /add.*import/i,
+            /add.*export/i
         ];
         
-        const hasPattern = patterns.some(pattern => pattern.test(text));
+        // Check for project creation patterns
+        const projectPatterns = [
+            /create.*app/i,
+            /make.*program/i,
+            /build.*project/i,
+            /write.*code/i,
+            /generate.*file/i,
+            /develop.*application/i,
+            /new.*project/i,
+            /start.*project/i
+        ];
         
-        return (hasAction && hasCodeContext) || hasPattern;
+        // Check if any pattern matches
+        const hasFileModification = fileModificationPatterns.some(pattern => pattern.test(text));
+        const hasProjectCreation = projectPatterns.some(pattern => pattern.test(text));
+        const hasCodeKeywords = codeKeywords.some(keyword => lowerText.includes(keyword));
+        
+        return hasFileModification || hasProjectCreation || hasCodeKeywords;
     }
 
     private async processCodeCreationResponse(response: string, webviewView: vscode.WebviewView) {
@@ -2091,6 +2108,53 @@ Provide a specific solution to fix this error. If it's a code issue, provide the
                             transform: translateY(0);
                         }
                     }
+                    @keyframes thinkingDots {
+                        0%, 20% { opacity: 0.2; }
+                        50% { opacity: 1; }
+                        100% { opacity: 0.2; }
+                    }
+                    @keyframes typingBounce {
+                        0%, 60%, 100% { transform: translateY(0); }
+                        30% { transform: translateY(-10px); }
+                    }
+                    @keyframes pulse {
+                        0%, 100% { opacity: 0.6; }
+                        50% { opacity: 1; }
+                    }
+                    .thinking-dots span {
+                        animation: thinkingDots 1.4s ease-in-out infinite;
+                        display: inline-block;
+                    }
+                    .thinking-dots span:nth-child(1) { animation-delay: 0s; }
+                    .thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+                    .thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+                    
+                    .typing-indicator {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 3px;
+                        margin-left: 8px;
+                    }
+                    .typing-indicator span {
+                        width: 4px;
+                        height: 4px;
+                        border-radius: 50%;
+                        background: var(--vscode-foreground);
+                        animation: typingBounce 1.4s ease-in-out infinite;
+                        opacity: 0.6;
+                    }
+                    .typing-indicator span:nth-child(1) { animation-delay: 0s; }
+                    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+                    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+                    
+                    .message.streaming {
+                        border-left: 3px solid rgba(102, 126, 234, 0.8);
+                        animation: pulse 2s ease-in-out infinite;
+                    }
+                    .message.thinking {
+                        background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 235, 59, 0.1) 100%);
+                        border: 1px solid rgba(255, 193, 7, 0.3);
+                    }
                     .message {
                         animation: slideIn 0.3s ease-out;
                         margin-bottom: 12px;
@@ -2121,6 +2185,23 @@ Provide a specific solution to fix this error. If it's a code issue, provide the
                         opacity: 0.7;
                         text-transform: uppercase;
                         letter-spacing: 0.5px;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                    }
+                    .message-header .avatar {
+                        font-size: 16px;
+                        width: 20px;
+                        height: 20px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        border-radius: 50%;
+                        background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+                    }
+                    .message-header .name {
+                        font-weight: 700;
+                        color: var(--vscode-foreground);
                     }
                     .message-content {
                         font-size: 13px;
@@ -2400,9 +2481,111 @@ Provide a specific solution to fix this error. If it's a code issue, provide the
                         }
                     });
 
+                    let currentTypingMessage = null;
+                    let typingTimeout = null;
+
+                    function addMessage(sender, text, type) {
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = \`message \${type}\`;
+                        
+                        const messageHeader = document.createElement('div');
+                        messageHeader.className = 'message-header';
+                        
+                        if (type === 'ai') {
+                            messageHeader.innerHTML = \`
+                                <div class="avatar">🤖</div>
+                                <div class="name">\${sender}</div>
+                            \`;
+                        } else {
+                            messageHeader.textContent = sender;
+                        }
+                        
+                        const messageContent = document.createElement('div');
+                        messageContent.className = 'message-content';
+                        
+                        messageDiv.appendChild(messageHeader);
+                        messageDiv.appendChild(messageContent);
+                        messagesContainer.appendChild(messageDiv);
+                        
+                        if (type === 'ai') {
+                            // Add typing effect for AI responses
+                            typeTextWithEffect(messageContent, text);
+                        } else {
+                            messageContent.innerHTML = marked.parse(text);
+                            messageContent.querySelectorAll('pre code').forEach((block) => {
+                                hljs.highlightElement(block);
+                            });
+                        }
+                        
+                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    }
+
+                    function typeTextWithEffect(element, text) {
+                        element.innerHTML = '';
+                        const parsedText = marked.parse(text);
+                        
+                        // Create a temporary element to parse the HTML
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = parsedText;
+                        
+                        // Extract text content for typing effect
+                        const textContent = tempDiv.textContent || tempDiv.innerText || '';
+                        
+                        let i = 0;
+                        element.innerHTML = '';
+                        
+                        function typeChar() {
+                            if (i < textContent.length) {
+                                // For now, just add character by character to a text node
+                                const currentText = textContent.substring(0, i + 1);
+                                element.textContent = currentText;
+                                i++;
+                                
+                                // Variable typing speed for more natural feel
+                                const delay = Math.random() * 30 + 10;
+                                setTimeout(typeChar, delay);
+                            } else {
+                                // After typing is complete, render the full HTML
+                                element.innerHTML = parsedText;
+                                element.querySelectorAll('pre code').forEach((block) => {
+                                    hljs.highlightElement(block);
+                                });
+                            }
+                        }
+                        
+                        // Add a small delay before starting typing
+                        setTimeout(typeChar, 200);
+                    }
+
                     window.addEventListener('message', event => {
                         const message = event.data;
-                        if (message.type === 'response') {
+                        
+                        if (message.type === 'thinking') {
+                            // Show thinking indicator with animation
+                            const thinkingDiv = document.createElement('div');
+                            thinkingDiv.className = 'message ai thinking';
+                            thinkingDiv.innerHTML = \`
+                                <div class="message-header">
+                                    <div class="avatar">🤖</div>
+                                    <div class="name">Astrelium</div>
+                                    <div class="thinking-dots">
+                                        <span>.</span><span>.</span><span>.</span>
+                                    </div>
+                                </div>
+                                <div class="message-content">\${message.text}</div>
+                            \`;
+                            messagesContainer.appendChild(thinkingDiv);
+                            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                            currentTypingMessage = thinkingDiv;
+                            
+                        } else if (message.type === 'complete_response' || message.type === 'response') {
+                            // Remove thinking indicator if present
+                            if (currentTypingMessage) {
+                                currentTypingMessage.remove();
+                                currentTypingMessage = null;
+                            }
+                            
+                            // Add message with typing effect
                             addMessage('Astrelium', message.text, 'ai');
                         }
                     });
