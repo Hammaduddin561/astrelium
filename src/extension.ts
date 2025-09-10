@@ -152,12 +152,6 @@ Respond directly and efficiently.`,
                                 const data = await response.json() as any;
                                 const reply = data.response || 'No response received';
                                 
-                                // Complete the response
-                                webviewView.webview.postMessage({ 
-                                    type: 'complete_response',
-                                    text: reply
-                                });
-                                
                                 // Save AI response to history
                                 this.addToHistory('assistant', reply);
                                 
@@ -165,7 +159,11 @@ Respond directly and efficiently.`,
                                     // Process the AI response to extract files and commands
                                     await this.processCodeCreationResponse(reply, webviewView);
                                 } else {
-                                    webviewView.webview.postMessage({ type: 'response', text: reply });
+                                    // Send single response for regular messages
+                                    webviewView.webview.postMessage({ 
+                                        type: 'complete_response', 
+                                        text: reply 
+                                    });
                                 }
                             } else {
                                 const errorMsg = `❌ Error: ${response.status}. Make sure gpt-oss:20b is running!`;
@@ -1421,11 +1419,6 @@ Respond directly and efficiently.`,
 
     private async processCodeCreationResponse(response: string, webviewView: vscode.WebviewView) {
         try {
-            webviewView.webview.postMessage({ 
-                type: 'response', 
-                text: '🤖 **Astrelium is processing your request...**\n\n🔍 Analyzing requirements...' 
-            });
-
             const activeEditor = vscode.window.activeTextEditor;
             const hasActiveFile = activeEditor !== undefined;
             
@@ -1447,8 +1440,8 @@ Respond directly and efficiently.`,
                     await this.applyCodeToCurrentFile(mainCode.content, webviewView);
                     
                     webviewView.webview.postMessage({ 
-                        type: 'response', 
-                        text: `\n\n**AI Explanation:**\n${response}` 
+                        type: 'complete_response', 
+                        text: response 
                     });
                     return;
                 }
@@ -1467,19 +1460,14 @@ Respond directly and efficiently.`,
             }
             
             if (files.length === 0) {
-                // Send original response and try to create files from code blocks
-                webviewView.webview.postMessage({ 
-                    type: 'response', 
-                    text: '🤖 **Creating files from code blocks...**' 
-                });
-                
+                // Try to create files from code blocks
                 const codeBlocks = this.extractCodeBlocks(response);
                 if (codeBlocks.length > 0) {
                     await this.createFilesFromCodeBlocks(codeBlocks, webviewView);
                 }
                 
                 webviewView.webview.postMessage({ 
-                    type: 'response', 
+                    type: 'complete_response', 
                     text: response 
                 });
                 return;
@@ -2693,42 +2681,116 @@ Provide a specific solution to fix this error. If it's a code issue, provide the
                         updateFilePreview();
                     }
 
-                    // Setup event listeners with enhanced debugging
-                    console.log('Setting up event listeners...');
-                    
-                    // Remove any existing event listeners first
-                    messageInput.removeEventListener('keydown', sendMessage);
-                    messageInput.removeEventListener('keypress', sendMessage);
-                    sendButton.removeEventListener('click', sendMessage);
-                    
-                    // Create a single sendMessage handler
-                    function handleSendMessage(e) {
-                        console.log('handleSendMessage called from:', e.type, 'key:', e.key);
-                        if (e.type === 'keydown' && e.key === 'Enter' && !e.shiftKey) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            sendMessage();
-                        } else if (e.type === 'click') {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            sendMessage();
-                        }
+                    // Setup event listeners with error checking
+                    if (messageInput) {
+                        messageInput.addEventListener('keypress', function(e) {
+                            console.log('Keypress event:', e.key);
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault();
+                                sendMessage();
+                            }
+                        });
+
+                        messageInput.addEventListener('keydown', function(e) {
+                            console.log('Keydown event:', e.key);
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault();
+                                sendMessage();
+                            }
+                        });
+                        
+                        // Focus the input when page loads
+                        messageInput.focus();
+                    } else {
+                        console.error('Cannot add event listeners - messageInput not found');
                     }
                     
-                    // Add single event listeners
-                    messageInput.addEventListener('keydown', handleSendMessage);
-                    sendButton.addEventListener('click', handleSendMessage);
-                    
-                    // Focus the input when page loads
-                    setTimeout(() => {
-                        messageInput.focus();
-                        console.log('Input focused');
-                    }, 100);
+                    // Setup send button event listener
+                    if (sendButton) {
+                        sendButton.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            sendMessage();
+                        });
+                    } else {
+                        console.error('Cannot add click listener - sendButton not found');
+                    }
 
                     let currentTypingMessage = null;
                     let typingTimeout = null;
 
-                    // Window message handler for VS Code communication
+                    function addMessage(sender, text, type) {
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = \`message \${type}\`;
+                        
+                        const messageHeader = document.createElement('div');
+                        messageHeader.className = 'message-header';
+                        
+                        if (type === 'ai') {
+                            messageHeader.innerHTML = \`
+                                <div class="avatar">🤖</div>
+                                <div class="name">\${sender}</div>
+                            \`;
+                        } else {
+                            messageHeader.textContent = sender;
+                        }
+                        
+                        const messageContent = document.createElement('div');
+                        messageContent.className = 'message-content';
+                        
+                        messageDiv.appendChild(messageHeader);
+                        messageDiv.appendChild(messageContent);
+                        messagesContainer.appendChild(messageDiv);
+                        
+                        if (type === 'ai') {
+                            // Add typing effect for AI responses
+                            typeTextWithEffect(messageContent, text);
+                        } else {
+                            messageContent.innerHTML = marked.parse(text);
+                            messageContent.querySelectorAll('pre code').forEach((block) => {
+                                hljs.highlightElement(block);
+                            });
+                        }
+                        
+                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    }
+
+                    function typeTextWithEffect(element, text) {
+                        element.innerHTML = '';
+                        const parsedText = marked.parse(text);
+                        
+                        // Create a temporary element to parse the HTML
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = parsedText;
+                        
+                        // Extract text content for typing effect
+                        const textContent = tempDiv.textContent || tempDiv.innerText || '';
+                        
+                        let i = 0;
+                        element.innerHTML = '';
+                        
+                        function typeChar() {
+                            if (i < textContent.length) {
+                                // For now, just add character by character to a text node
+                                const currentText = textContent.substring(0, i + 1);
+                                element.textContent = currentText;
+                                i++;
+                                
+                                // Variable typing speed for more natural feel
+                                const delay = Math.random() * 30 + 10;
+                                setTimeout(typeChar, delay);
+                            } else {
+                                // After typing is complete, render the full HTML
+                                element.innerHTML = parsedText;
+                                element.querySelectorAll('pre code').forEach((block) => {
+                                    hljs.highlightElement(block);
+                                });
+                            }
+                        }
+                        
+                        // Add a small delay before starting typing
+                        setTimeout(typeChar, 200);
+                    }
+
                     window.addEventListener('message', event => {
                         const message = event.data;
                         
