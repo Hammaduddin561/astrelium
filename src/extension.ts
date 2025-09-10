@@ -1970,6 +1970,20 @@ Provide a specific solution to fix this error. If it's a code issue, provide the
                     .input-wrapper {
                         flex: 1;
                         position: relative;
+                        display: flex;
+                        background: rgba(255, 255, 255, 0.06);
+                        border: 1px solid rgba(255, 255, 255, 0.12);
+                        border-radius: 10px;
+                        overflow: hidden;
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        backdrop-filter: blur(10px);
+                    }
+                    .input-wrapper:focus-within {
+                        border-color: rgba(102, 126, 234, 0.6);
+                        box-shadow: 
+                            0 0 0 3px rgba(102, 126, 234, 0.15),
+                            0 4px 16px rgba(0, 0, 0, 0.15);
+                        transform: translateY(-1px);
                     }
                     .file-buttons {
                         display: flex;
@@ -2035,28 +2049,35 @@ Provide a specific solution to fix this error. If it's a code issue, provide the
                         box-shadow: none;
                     }
                     input[type="text"] {
-                        width: 100%;
+                        flex: 1;
                         padding: 14px 16px;
                         margin: 0;
-                        background: rgba(255, 255, 255, 0.06);
+                        background: transparent;
                         color: var(--vscode-input-foreground);
-                        border: 1px solid rgba(255, 255, 255, 0.12);
-                        border-radius: 10px;
+                        border: none;
                         font-size: 13px;
                         font-family: inherit;
-                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                        backdrop-filter: blur(10px);
-                    }
-                    input[type="text"]:focus {
                         outline: none;
-                        border-color: rgba(102, 126, 234, 0.6);
-                        box-shadow: 
-                            0 0 0 3px rgba(102, 126, 234, 0.15),
-                            0 4px 16px rgba(0, 0, 0, 0.15);
-                        transform: translateY(-1px);
                     }
                     input[type="text"]::placeholder {
                         color: rgba(255, 255, 255, 0.5);
+                    }
+                    .send-btn {
+                        background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+                        border: none;
+                        color: white;
+                        padding: 8px 12px;
+                        cursor: pointer;
+                        font-size: 14px;
+                        transition: all 0.2s ease;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        min-width: 40px;
+                    }
+                    .send-btn:hover {
+                        background: linear-gradient(135deg, rgba(102, 126, 234, 1) 0%, rgba(118, 75, 162, 1) 100%);
+                        transform: scale(1.05);
                     }
                     .button-grid {
                         display: flex;
@@ -2377,7 +2398,10 @@ Provide a specific solution to fix this error. If it's a code issue, provide the
                     <div class="file-preview" id="filePreview"></div>
                     <div class="input-row">
                         <div class="input-wrapper">
-                            <input type="text" id="messageInput" placeholder="Ask me anything about coding..." />
+                            <input type="text" id="messageInput" placeholder="Ask me anything about coding..." autocomplete="off" />
+                            <button id="sendButton" class="send-btn" title="Send Message">
+                                ➤
+                            </button>
                         </div>
                         <div class="file-buttons">
                             <button class="file-btn" onclick="document.getElementById('fileInput').click()" title="Upload Any File">
@@ -2418,8 +2442,21 @@ Provide a specific solution to fix this error. If it's a code issue, provide the
                     const vscode = acquireVsCodeApi();
                     const chatContainer = document.getElementById('chatContainer');
                     const messageInput = document.getElementById('messageInput');
+                    const sendButton = document.getElementById('sendButton');
                     const filePreview = document.getElementById('filePreview');
                     const fileInput = document.getElementById('fileInput');
+                    
+                    // Debug: Check if elements are found
+                    console.log('messageInput found:', messageInput);
+                    console.log('sendButton found:', sendButton);
+                    console.log('chatContainer found:', chatContainer);
+                    
+                    if (!messageInput) {
+                        console.error('messageInput element not found!');
+                    }
+                    if (!sendButton) {
+                        console.error('sendButton element not found!');
+                    }
                     
                     let uploadedFiles = [];
 
@@ -2656,11 +2693,39 @@ Provide a specific solution to fix this error. If it's a code issue, provide the
                         updateFilePreview();
                     }
 
-                    messageInput.addEventListener('keypress', function(e) {
-                        if (e.key === 'Enter') {
+                    // Setup event listeners with error checking
+                    if (messageInput) {
+                        messageInput.addEventListener('keypress', function(e) {
+                            console.log('Keypress event:', e.key);
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault();
+                                sendMessage();
+                            }
+                        });
+
+                        messageInput.addEventListener('keydown', function(e) {
+                            console.log('Keydown event:', e.key);
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault();
+                                sendMessage();
+                            }
+                        });
+                        
+                        // Focus the input when page loads
+                        messageInput.focus();
+                    } else {
+                        console.error('Cannot add event listeners - messageInput not found');
+                    }
+                    
+                    // Setup send button event listener
+                    if (sendButton) {
+                        sendButton.addEventListener('click', function(e) {
+                            e.preventDefault();
                             sendMessage();
-                        }
-                    });
+                        });
+                    } else {
+                        console.error('Cannot add click listener - sendButton not found');
+                    }
 
                     let currentTypingMessage = null;
                     let typingTimeout = null;
