@@ -228,83 +228,41 @@ Apache License 2.0 - see [LICENSE](LICENSE) file for details.
 
 ---
 
-**🚀 Ready to revolutionize your coding experience? Install Astrelium and unleash the power of local AI assistance!**EADME
+---
 
-This is the README for your extension "astrelium". After writing up a brief description, we recommend including the following sections.
+## 🎮 **Extension Settings**
 
-## Features
+Astrelium contributes the following VS Code settings:
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+* `astrelium.modelEndpoint`: Configure the Ollama API endpoint (default: `http://localhost:11434`)
+* `astrelium.modelName`: Set your preferred LLM model (default: `gpt-oss:20b`)
+* `astrelium.autoSave`: Enable/disable automatic chat history saving
+* `astrelium.contextWindow`: Maximum tokens for conversation context (default: `4096`)
+* `astrelium.enableFileUpload`: Enable/disable file upload functionality
 
 ---
 
-## 📋 **Requirements**
+## ⚡ **Performance Tips**
 
-- **Visual Studio Code** 1.80.0 or higher
-- **Node.js** 16.0 or higher
-- **Ollama** (or compatible local LLM server)
-- **Local LLM Model** (recommended: `gpt-oss:20b`)
+### 🚀 **Optimal Model Selection**
+- **gpt-oss:20b**: Best balance of capability and speed
+- **llama3.1:8b**: Faster responses, good for basic tasks
+- **codellama:13b**: Specialized for code generation
 
----
+### 🔧 **System Optimization**
+- **RAM**: Minimum 16GB recommended for smooth operation
+- **GPU**: CUDA/Metal acceleration improves response times
+- **Storage**: SSD recommended for faster model loading
 
-## 🔧 Installation
-
-### From VS Code Marketplace (Coming Soon)
-1. Open VS Code
-2. Go to Extensions (`Ctrl+Shift+X`)
-3. Search for "Astrelium"
-4. Click Install
-
-### Manual Installation
-1. Clone this repository
-2. Run `npm install` to install dependencies
-3. Run `npm run compile` to build the extension
-4. Press `F5` to launch Extension Development Host
-5. The Astrelium sidebar will appear in the Activity Bar
+### 💡 **Usage Best Practices**
+- Keep conversations focused for better context
+- Use specific commands for targeted results
+- Upload files under 10MB for optimal performance
+- Clear chat history periodically for memory management
 
 ---
 
-## ⚙️ Setup
 
-### 1. Install Ollama
-```bash
-# Install Ollama (visit https://ollama.ai for platform-specific instructions)
-curl -fsSL https://ollama.ai/install.sh | sh
-
-# Pull the recommended model
-ollama pull gpt-oss:20b
-```
-
-### 2. Start Ollama Server
-```bash
-ollama serve
-```
-
-### 3. Configure Astrelium
-- Open VS Code and look for the Astrelium icon in the sidebar
-- Click to open the chat interface
-- The extension will automatically connect to Ollama on `localhost:11434`
 
 ---
 
