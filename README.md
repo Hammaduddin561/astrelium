@@ -2,6 +2,14 @@
   
 ![Astrelium Banner](https://raw.githubusercontent.com/Hammaduddin561/astrelium/main/assets/astrelium-banner.jpg)
 
+## 📊 Project Stats
+
+![GitHub stars](https://img.shields.io/github/stars/Hammaduddin561/astrelium?style=social)
+![GitHub forks](https://img.shields.io/github/forks/Hammaduddin561/astrelium?style=social)
+![GitHub issues](https://img.shields.io/github/issues/Hammaduddin561/astrelium)
+![GitHub license](https://img.shields.io/github/license/Hammaduddin561/astrelium)
+![VS Code version](https://img.shields.io/badge/VS%20Code-%3E%3D1.80.0-blue)
+
 </div>
 
 Astrelium is a powerful, intelligent local-first coding assistant built as a VS Code extension. It connects to your own LLM (like `gpt-oss:20b` via Ollama) and provides comprehensive development capabilities including automated project creation, workspace analysis, code review, testing, debugging, and much more—all offline with no cloud dependencies.
@@ -361,17 +369,7 @@ limitations under the License.
 - [ ] Advanced code analysis and metrics
 - [ ] Integration with popular development tools
 
----
 
-## 📊 Project Stats
-
-![GitHub stars](https://img.shields.io/github/stars/Hammaduddin561/astrelium?style=social)
-![GitHub forks](https://img.shields.io/github/forks/Hammaduddin561/astrelium?style=social)
-![GitHub issues](https://img.shields.io/github/issues/Hammaduddin561/astrelium)
-![GitHub license](https://img.shields.io/github/license/Hammaduddin561/astrelium)
-![VS Code version](https://img.shields.io/badge/VS%20Code-%3E%3D1.80.0-blue)
-
----
 
 <div align="center">
   
