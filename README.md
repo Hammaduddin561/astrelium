@@ -7,6 +7,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/Hammaduddin561/astrelium?style=social)](https://github.com/Hammaduddin561/astrelium/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/Hammaduddin561/astrelium?style=social)](https://github.com/Hammaduddin561/astrelium/network/members)
 [![GitHub issues](https://img.shields.io/github/issues/Hammaduddin561/astrelium)](https://github.com/Hammaduddin561/astrelium/issues)
+[![GitHub Discussions](https://img.shields.io/github/discussions/Hammaduddin561/astrelium)](https://github.com/Hammaduddin561/astrelium/discussions)
 [![GitHub license](https://img.shields.io/github/license/Hammaduddin561/astrelium)](https://github.com/Hammaduddin561/astrelium/blob/main/LICENSE)
 [![VS Code version](https://img.shields.io/badge/VS%20Code-%3E%3D1.80.0-blue)](https://code.visualstudio.com/)
 [![GitHub last commit](https://img.shields.io/github/last-commit/Hammaduddin561/astrelium)](https://github.com/Hammaduddin561/astrelium/commits/main)
@@ -348,9 +349,10 @@ limitations under the License.
 
 ## 🐛 Issues & Support
 
-- **Bug Reports**: [GitHub Issues](https://github.com/mdhammaduddin/astrelium/issues)
-- **Feature Requests**: [GitHub Discussions](https://github.com/mdhammaduddin/astrelium/discussions)
-- **Documentation**: [Wiki](https://github.com/mdhammaduddin/astrelium/wiki)
+- **Bug Reports**: [GitHub Issues](https://github.com/Hammaduddin561/astrelium/issues)
+- **Feature Requests & Ideas**: [GitHub Discussions](https://github.com/Hammaduddin561/astrelium/discussions)
+- **Questions & Help**: [GitHub Discussions Q&A](https://github.com/Hammaduddin561/astrelium/discussions/categories/q-a)
+- **Documentation**: [Wiki](https://github.com/Hammaduddin561/astrelium/wiki)
 
 ---
 
