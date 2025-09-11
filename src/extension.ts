@@ -2681,7 +2681,7 @@ Provide a specific solution to fix this error. If it's a code issue, provide the
                         updateFilePreview();
                     }
 
-                    // Setup event listeners with clean, single approach
+                    // Setup event listeners with direct inline handlers
                     console.log('Setting up input event listeners...');
                     console.log('messageInput found:', !!messageInput);
                     console.log('sendButton found:', !!sendButton);
@@ -2691,29 +2691,39 @@ Provide a specific solution to fix this error. If it's a code issue, provide the
                         return;
                     }
                     
-                    // Single event handler for Enter key
-                    function handleEnterKey(event) {
-                        console.log('Enter key handler triggered:', event.type, event.key);
+                    // Direct event listener for Enter key
+                    messageInput.addEventListener('keydown', function(event) {
+                        console.log('Keydown event:', event.key, 'Shift:', event.shiftKey);
                         if (event.key === 'Enter' && !event.shiftKey) {
+                            console.log('Enter pressed - preventing default and sending message');
                             event.preventDefault();
                             event.stopPropagation();
-                            console.log('Calling sendMessage...');
-                            sendMessage();
+                            
+                            // Call sendMessage directly
+                            const message = messageInput.value.trim();
+                            console.log('Message to send:', message);
+                            if (message || uploadedFiles.length > 0) {
+                                sendMessage();
+                            } else {
+                                console.log('No message to send');
+                            }
                         }
-                    }
+                    });
                     
-                    // Single event handler for send button
-                    function handleSendClick(event) {
+                    // Direct event listener for send button
+                    sendButton.addEventListener('click', function(event) {
                         console.log('Send button clicked');
                         event.preventDefault();
                         event.stopPropagation();
-                        console.log('Calling sendMessage...');
-                        sendMessage();
-                    }
-                    
-                    // Add event listeners
-                    messageInput.addEventListener('keydown', handleEnterKey);
-                    sendButton.addEventListener('click', handleSendClick);
+                        
+                        const message = messageInput.value.trim();
+                        console.log('Message to send:', message);
+                        if (message || uploadedFiles.length > 0) {
+                            sendMessage();
+                        } else {
+                            console.log('No message to send');
+                        }
+                    });
                     
                     // Focus the input when page loads
                     setTimeout(() => {
