@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Model Comparison Chart - Astrelium</title>
+    <link rel="stylesheet" href="ModelComparisonChart.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .demo-section {
+            margin-bottom: 40px;
+        }
+        
+        .demo-title {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        .chart-wrapper {
+            background: white;
+            border-radius: 16px;
+            padding: 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            min-height: 400px;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            opacity: 0.8;
+        }
+        
+        .footer a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            body {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <header class="header">
+            <h1>🌌 Astrelium AI Model Comparison</h1>
+            <p>Interactive visualization of AI model performance metrics</p>
+        </header>
+        
+        <div class="demo-section">
+            <h2 class="demo-title">📊 Overall Performance Comparison</h2>
+            <div class="chart-wrapper">
+                <div class="chart-controls">
+                    <div class="control-group">
+                        <label for="metric-select">Metric</label>
+                        <select id="metric-select" class="chart-select">
+                            <option value="accuracy">Accuracy</option>
+                            <option value="precision">Precision</option>
+                            <option value="recall">Recall</option>
+                            <option value="f1Score">F1 Score</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="chart-type-select">Chart Type</label>
+                        <select id="chart-type-select" class="chart-select">
+                            <option value="bar">Bar Chart</option>
+                            <option value="line">Line Chart</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Theme</label>
+                        <div>
+                            <button id="light-theme-btn" class="chart-btn">Light</button>
+                            <button id="dark-theme-btn" class="chart-btn">Dark</button>
+                            <button id="auto-theme-btn" class="chart-btn active">Auto</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="main-chart" class="fade-in"></div>
+            </div>
+        </div>
+
+        <div class="demo-grid">
+            <div class="demo-section">
+                <h3 class="demo-title">🏆 Top Performers</h3>
+                <div class="chart-wrapper">
+                    <div id="top-models-chart" class="fade-in"></div>
+                </div>
+            </div>
+            
+            <div class="demo-section">
+                <h3 class="demo-title">🔬 Radar Analysis</h3>
+                <div class="chart-wrapper">
+                    <div id="radar-chart" class="fade-in"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h3 class="demo-title">💻 Coding Models Comparison</h3>
+            <div class="chart-wrapper">
+                <div id="coding-models-chart" class="fade-in"></div>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h3 class="demo-title">📋 Model Information</h3>
+            <div id="model-info" class="model-info-grid fade-in">
+                <!-- Model cards will be populated by JavaScript -->
+            </div>
+        </div>
+        
+        <footer class="footer">
+            <p>Built with ❤️ for <a href="https://github.com/Hammaduddin561/astrelium" target="_blank">Astrelium VS Code Extension</a></p>
+            <p>Powered by Chart.js | Data is simulated for demonstration purposes</p>
+        </footer>
+    </div>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    
+    <!-- Model Data -->
+    <script>
+        // Inline the model data for standalone usage
+        const sampleModelData = [
+            {
+                id: 'gpt-4',
+                name: 'GPT-4',
+                company: 'OpenAI',
+                category: 'general',
+                metrics: { accuracy: 92.5, precision: 90.8, recall: 94.2, f1Score: 92.4 },
+                color: '#10a37f',
+                description: 'Large multimodal model with strong reasoning capabilities',
+                releaseDate: '2023-03'
+            },
+            {
+                id: 'claude-3-opus',
+                name: 'Claude 3 Opus',
+                company: 'Anthropic',
+                category: 'general',
+                metrics: { accuracy: 91.8, precision: 89.5, recall: 93.1, f1Score: 91.3 },
+                color: '#d97706',
+                description: 'Most capable model in Claude 3 family',
+                releaseDate: '2024-03'
+            },
+            {
+                id: 'gemini-pro',
+                name: 'Gemini Pro',
+                company: 'Google',
+                category: 'multimodal',
+                metrics: { accuracy: 89.2, precision: 87.6, recall: 90.8, f1Score: 89.1 },
+                color: '#4285f4',
+                description: 'Multimodal AI model optimized for various tasks',
+                releaseDate: '2023-12'
+            },
+            {
+                id: 'llama-2-70b',
+                name: 'LLaMA 2 70B',
+                company: 'Meta',
+                category: 'general',
+                metrics: { accuracy: 87.3, precision: 85.2, recall: 88.9, f1Score: 87.0 },
+                color: '#1877f2',
+                description: 'Open-source large language model',
+                releaseDate: '2023-07'
+            },
+            {
+                id: 'code-llama-34b',
+                name: 'Code Llama 34B',
+                company: 'Meta',
+                category: 'coding',
+                metrics: { accuracy: 88.7, precision: 91.2, recall: 85.4, f1Score: 88.2 },
+                color: '#8b5cf6',
+                description: 'Specialized coding model based on LLaMA 2',
+                releaseDate: '2023-08'
+            },
+            {
+                id: 'mixtral-8x7b',
+                name: 'Mixtral 8x7B',
+                company: 'Mistral AI',
+                category: 'general',
+                metrics: { accuracy: 86.9, precision: 84.7, recall: 88.2, f1Score: 86.4 },
+                color: '#ff6b35',
+                description: 'Mixture of experts model with high performance',
+                releaseDate: '2023-12'
+            }
+        ];
+        
+        const getModelsByCategory = (category) => sampleModelData.filter(m => m.category === category);
+        const getTopModelsByMetric = (metric, limit = 5) => 
+            [...sampleModelData].sort((a, b) => b.metrics[metric] - a.metrics[metric]).slice(0, limit);
+    </script>
+    
+    <!-- Simplified Chart Component -->
+    <script>
+        class ModelComparisonChart {
+            constructor(config) {
+                this.config = {
+                    models: config.models || sampleModelData.slice(0, 6),
+                    metric: config.metric || 'accuracy',
+                    chartType: config.chartType || 'bar',
+                    theme: config.theme || 'auto',
+                    showLegend: config.showLegend ?? true,
+                    showAnimation: config.showAnimation ?? true,
+                    responsive: config.responsive ?? true,
+                    ...config
+                };
+                
+                this.container = document.getElementById(this.config.containerId);
+                if (!this.container) {
+                    throw new Error(`Container with id "${this.config.containerId}" not found`);
+                }
+                
+                this.init();
+            }
+            
+            init() {
+                this.createCanvas();
+                this.createChart();
+                this.setupEventListeners();
+            }
+            
+            createCanvas() {
+                this.container.innerHTML = '';
+                this.canvas = document.createElement('canvas');
+                this.canvas.id = `${this.config.containerId}-canvas`;
+                this.applyTheme();
+                this.container.appendChild(this.canvas);
+            }
+            
+            applyTheme() {
+                const theme = this.getEffectiveTheme();
+                this.container.className = `model-chart-container ${theme}-theme`;
+            }
+            
+            getEffectiveTheme() {
+                if (this.config.theme === 'auto') {
+                    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                }
+                return this.config.theme;
+            }
+            
+            createChart() {
+                const ctx = this.canvas.getContext('2d');
+                const theme = this.getEffectiveTheme();
+                const textColor = theme === 'dark' ? '#cccccc' : '#333333';
+                const gridColor = theme === 'dark' ? '#404040' : '#e0e0e0';
+                
+                let chartData, chartOptions;
+                
+                if (this.config.chartType === 'radar') {
+                    chartData = this.createRadarData();
+                    chartOptions = this.createRadarOptions(textColor, gridColor);
+                } else {
+                    chartData = this.createBarLineData();
+                    chartOptions = this.createBarLineOptions(textColor, gridColor);
+                }
+                
+                this.chart = new Chart(ctx, {
+                    type: this.config.chartType === 'radar' ? 'radar' : this.config.chartType,
+                    data: chartData,
+                    options: chartOptions
+                });
+            }
+            
+            createBarLineData() {
+                const labels = this.config.models.map(model => model.name);
+                const data = this.config.models.map(model => model.metrics[this.config.metric]);
+                const colors = this.config.models.map(model => model.color);
+                
+                return {
+                    labels,
+                    datasets: [{
+                        label: `${this.getMetricLabel(this.config.metric)} (%)`,
+                        data,
+                        backgroundColor: colors.map(color => color + '80'),
+                        borderColor: colors,
+                        borderWidth: 2,
+                        tension: this.config.chartType === 'line' ? 0.4 : 0
+                    }]
+                };
+            }
+            
+            createRadarData() {
+                const metrics = ['accuracy', 'precision', 'recall', 'f1Score'];
+                const labels = metrics.map(metric => this.getMetricLabel(metric));
+                
+                const datasets = this.config.models.slice(0, 4).map(model => ({
+                    label: model.name,
+                    data: metrics.map(metric => model.metrics[metric]),
+                    backgroundColor: model.color + '20',
+                    borderColor: model.color,
+                    borderWidth: 2,
+                    pointBackgroundColor: model.color,
+                    pointBorderColor: model.color,
+                    pointRadius: 4
+                }));
+                
+                return { labels, datasets };
+            }
+            
+            createBarLineOptions(textColor, gridColor) {
+                return {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: { duration: this.config.showAnimation ? 1000 : 0 },
+                    plugins: {
+                        legend: {
+                            display: this.config.showLegend,
+                            labels: { color: textColor, font: { size: 12 } }
+                        },
+                        title: {
+                            display: true,
+                            text: `AI Model Comparison - ${this.getMetricLabel(this.config.metric)}`,
+                            color: textColor,
+                            font: { size: 16, weight: 'bold' },
+                            padding: 20
+                        },
+                        tooltip: {
+                            backgroundColor: this.getEffectiveTheme() === 'dark' ? '#2d2d30' : '#ffffff',
+                            titleColor: textColor,
+                            bodyColor: textColor,
+                            borderColor: gridColor,
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            callbacks: {
+                                afterLabel: (context) => {
+                                    const model = this.config.models[context.dataIndex];
+                                    return [
+                                        `Company: ${model.company}`,
+                                        `Category: ${model.category}`,
+                                        model.description || ''
+                                    ].filter(Boolean);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { color: textColor, callback: (value) => value + '%' },
+                            grid: { color: gridColor },
+                            title: { display: true, text: `${this.getMetricLabel(this.config.metric)} (%)`, color: textColor }
+                        },
+                        x: {
+                            ticks: { color: textColor, maxRotation: 45 },
+                            grid: { color: gridColor },
+                            title: { display: true, text: 'AI Models', color: textColor }
+                        }
+                    }
+                };
+            }
+            
+            createRadarOptions(textColor, gridColor) {
+                return {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: { duration: this.config.showAnimation ? 1000 : 0 },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: { color: textColor, font: { size: 12 } }
+                        },
+                        title: {
+                            display: true,
+                            text: 'AI Model Metrics Comparison',
+                            color: textColor,
+                            font: { size: 16, weight: 'bold' },
+                            padding: 20
+                        }
+                    },
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { color: textColor, callback: (value) => value + '%' },
+                            grid: { color: gridColor },
+                            pointLabels: { color: textColor, font: { size: 12 } }
+                        }
+                    }
+                };
+            }
+            
+            getMetricLabel(metric) {
+                const labels = {
+                    accuracy: 'Accuracy',
+                    precision: 'Precision',
+                    recall: 'Recall',
+                    f1Score: 'F1 Score'
+                };
+                return labels[metric];
+            }
+            
+            setupEventListeners() {
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+                    if (this.config.theme === 'auto') {
+                        this.updateTheme();
+                    }
+                });
+            }
+            
+            updateModels(models) {
+                this.config.models = models;
+                this.updateChart();
+            }
+            
+            updateMetric(metric) {
+                this.config.metric = metric;
+                this.updateChart();
+            }
+            
+            updateChartType(chartType) {
+                this.config.chartType = chartType;
+                this.destroy();
+                this.init();
+            }
+            
+            updateTheme(theme) {
+                this.config.theme = theme;
+                this.updateTheme();
+            }
+            
+            updateChart() {
+                if (this.config.chartType === 'radar') {
+                    this.chart.data = this.createRadarData();
+                } else {
+                    this.chart.data = this.createBarLineData();
+                }
+                this.chart.update('active');
+            }
+            
+            updateTheme() {
+                this.destroy();
+                this.init();
+            }
+            
+            destroy() {
+                if (this.chart) {
+                    this.chart.destroy();
+                }
+            }
+        }
+        
+        // Initialize charts when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Main interactive chart
+            const mainChart = new ModelComparisonChart({
+                containerId: 'main-chart',
+                models: sampleModelData.slice(0, 6)
+            });
+            
+            // Top performers chart
+            const topChart = new ModelComparisonChart({
+                containerId: 'top-models-chart',
+                models: getTopModelsByMetric('accuracy', 4),
+                metric: 'accuracy'
+            });
+            
+            // Radar comparison
+            new ModelComparisonChart({
+                containerId: 'radar-chart',
+                models: sampleModelData.slice(0, 4),
+                chartType: 'radar'
+            });
+            
+            // Coding models comparison
+            new ModelComparisonChart({
+                containerId: 'coding-models-chart',
+                models: [...getModelsByCategory('coding'), ...sampleModelData.filter(m => m.category === 'general').slice(0, 3)],
+                metric: 'precision'
+            });
+            
+            // Event listeners for controls
+            document.getElementById('metric-select').addEventListener('change', function(e) {
+                mainChart.updateMetric(e.target.value);
+            });
+            
+            document.getElementById('chart-type-select').addEventListener('change', function(e) {
+                mainChart.updateChartType(e.target.value);
+            });
+            
+            // Theme buttons
+            const themeButtons = {
+                'light-theme-btn': 'light',
+                'dark-theme-btn': 'dark',
+                'auto-theme-btn': 'auto'
+            };
+            
+            Object.entries(themeButtons).forEach(([btnId, theme]) => {
+                document.getElementById(btnId).addEventListener('click', function() {
+                    // Update active state
+                    document.querySelectorAll('.chart-btn').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update all charts
+                    [mainChart, topChart].forEach(chart => chart.updateTheme(theme));
+                });
+            });
+            
+            // Generate model info cards
+            const modelInfoContainer = document.getElementById('model-info');
+            sampleModelData.slice(0, 6).forEach(model => {
+                const card = document.createElement('div');
+                card.className = 'model-info-card slide-in';
+                card.style.setProperty('--model-color', model.color);
+                
+                card.innerHTML = `
+                    <h3 class="model-name">${model.name}</h3>
+                    <div class="model-company">${model.company}</div>
+                    <div class="model-metrics">
+                        <div class="metric-item">
+                            <span class="metric-label">Accuracy</span>
+                            <span class="metric-value">${model.metrics.accuracy}%</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Precision</span>
+                            <span class="metric-value">${model.metrics.precision}%</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Recall</span>
+                            <span class="metric-value">${model.metrics.recall}%</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">F1 Score</span>
+                            <span class="metric-value">${model.metrics.f1Score}%</span>
+                        </div>
+                    </div>
+                    <div class="model-description">${model.description}</div>
+                `;
+                
+                modelInfoContainer.appendChild(card);
+            });
+        });
+    </script>
+</body>
+</html>
