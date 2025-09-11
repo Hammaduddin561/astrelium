@@ -2681,115 +2681,48 @@ Provide a specific solution to fix this error. If it's a code issue, provide the
                         updateFilePreview();
                     }
 
-                    // Setup event listeners with error checking
-                    if (messageInput) {
-                        messageInput.addEventListener('keypress', function(e) {
-                            console.log('Keypress event:', e.key);
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                                e.preventDefault();
-                                sendMessage();
-                            }
-                        });
-
-                        messageInput.addEventListener('keydown', function(e) {
-                            console.log('Keydown event:', e.key);
-                            if (e.key === 'Enter' && !e.shiftKey) {
-                                e.preventDefault();
-                                sendMessage();
-                            }
-                        });
-                        
-                        // Focus the input when page loads
-                        messageInput.focus();
-                    } else {
-                        console.error('Cannot add event listeners - messageInput not found');
+                    // Setup event listeners with clean, single approach
+                    console.log('Setting up input event listeners...');
+                    console.log('messageInput found:', !!messageInput);
+                    console.log('sendButton found:', !!sendButton);
+                    
+                    if (!messageInput || !sendButton) {
+                        console.error('Critical elements missing!');
+                        return;
                     }
                     
-                    // Setup send button event listener
-                    if (sendButton) {
-                        sendButton.addEventListener('click', function(e) {
-                            e.preventDefault();
+                    // Single event handler for Enter key
+                    function handleEnterKey(event) {
+                        console.log('Enter key handler triggered:', event.type, event.key);
+                        if (event.key === 'Enter' && !event.shiftKey) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            console.log('Calling sendMessage...');
                             sendMessage();
-                        });
-                    } else {
-                        console.error('Cannot add click listener - sendButton not found');
+                        }
                     }
+                    
+                    // Single event handler for send button
+                    function handleSendClick(event) {
+                        console.log('Send button clicked');
+                        event.preventDefault();
+                        event.stopPropagation();
+                        console.log('Calling sendMessage...');
+                        sendMessage();
+                    }
+                    
+                    // Add event listeners
+                    messageInput.addEventListener('keydown', handleEnterKey);
+                    sendButton.addEventListener('click', handleSendClick);
+                    
+                    // Focus the input when page loads
+                    setTimeout(() => {
+                        messageInput.focus();
+                        console.log('Input focused and ready');
+                    }, 100);
 
                     let currentTypingMessage = null;
                     let typingTimeout = null;
-
-                    function addMessage(sender, text, type) {
-                        const messageDiv = document.createElement('div');
-                        messageDiv.className = \`message \${type}\`;
-                        
-                        const messageHeader = document.createElement('div');
-                        messageHeader.className = 'message-header';
-                        
-                        if (type === 'ai') {
-                            messageHeader.innerHTML = \`
-                                <div class="avatar">🤖</div>
-                                <div class="name">\${sender}</div>
-                            \`;
-                        } else {
-                            messageHeader.textContent = sender;
-                        }
-                        
-                        const messageContent = document.createElement('div');
-                        messageContent.className = 'message-content';
-                        
-                        messageDiv.appendChild(messageHeader);
-                        messageDiv.appendChild(messageContent);
-                        messagesContainer.appendChild(messageDiv);
-                        
-                        if (type === 'ai') {
-                            // Add typing effect for AI responses
-                            typeTextWithEffect(messageContent, text);
-                        } else {
-                            messageContent.innerHTML = marked.parse(text);
-                            messageContent.querySelectorAll('pre code').forEach((block) => {
-                                hljs.highlightElement(block);
-                            });
-                        }
-                        
-                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                    }
-
-                    function typeTextWithEffect(element, text) {
-                        element.innerHTML = '';
-                        const parsedText = marked.parse(text);
-                        
-                        // Create a temporary element to parse the HTML
-                        const tempDiv = document.createElement('div');
-                        tempDiv.innerHTML = parsedText;
-                        
-                        // Extract text content for typing effect
-                        const textContent = tempDiv.textContent || tempDiv.innerText || '';
-                        
-                        let i = 0;
-                        element.innerHTML = '';
-                        
-                        function typeChar() {
-                            if (i < textContent.length) {
-                                // For now, just add character by character to a text node
-                                const currentText = textContent.substring(0, i + 1);
-                                element.textContent = currentText;
-                                i++;
-                                
-                                // Variable typing speed for more natural feel
-                                const delay = Math.random() * 30 + 10;
-                                setTimeout(typeChar, delay);
-                            } else {
-                                // After typing is complete, render the full HTML
-                                element.innerHTML = parsedText;
-                                element.querySelectorAll('pre code').forEach((block) => {
-                                    hljs.highlightElement(block);
-                                });
-                            }
-                        }
-                        
-                        // Add a small delay before starting typing
-                        setTimeout(typeChar, 200);
-                    }
 
                     window.addEventListener('message', event => {
                         const message = event.data;
