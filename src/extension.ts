@@ -4,6 +4,7 @@ import * as path from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import fetch from 'node-fetch';
+import { registerComparisonCommands } from './ComparisonIntegration';
 
 const execAsync = promisify(exec);
 
@@ -13,6 +14,9 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.window.registerWebviewViewProvider(ChatViewProvider.viewType, provider)
     );
+
+    // Register AI model comparison functionality
+    registerComparisonCommands(context);
     
     // Auto-analyze workspace when files change
     context.subscriptions.push(

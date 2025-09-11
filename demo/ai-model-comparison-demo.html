@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astrelium - AI Model Comparison Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .demo-header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .demo-header h1 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .demo-header p {
+            font-size: 20px;
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+
+        .demo-badges {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.4);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .comparison-section {
+            padding: 40px;
+        }
+
+        .theme-selector {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .theme-selector h3 {
+            margin-bottom: 16px;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .theme-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .theme-btn {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            color: #495057;
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .theme-btn:hover {
+            background: #e9ecef;
+            border-color: #adb5bd;
+        }
+
+        .theme-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 40px;
+            text-align: center;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .footer h3 {
+            color: #333;
+            margin-bottom: 16px;
+            font-size: 24px;
+        }
+
+        .footer p {
+            color: #666;
+            margin-bottom: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .cta-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+        }
+
+        .cta-btn.secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .demo-header {
+                padding: 30px 20px;
+            }
+
+            .demo-header h1 {
+                font-size: 36px;
+            }
+
+            .demo-header p {
+                font-size: 18px;
+            }
+
+            .comparison-section {
+                padding: 30px 20px;
+            }
+
+            .footer {
+                padding: 30px 20px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .cta-btn {
+                width: 100%;
+                max-width: 300px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>🚀 Astrelium</h1>
+            <p>Privacy-First AI Coding Assistant - See how Astrelium compares to other AI coding tools</p>
+            <div class="demo-badges">
+                <span class="badge">🔒 100% Private</span>
+                <span class="badge">💰 $0/month</span>
+                <span class="badge">📡 Works Offline</span>
+                <span class="badge">⚡ VS Code Native</span>
+            </div>
+        </div>
+
+        <div class="comparison-section">
+            <div class="theme-selector">
+                <h3>Choose Theme</h3>
+                <div class="theme-buttons">
+                    <button class="theme-btn active" data-theme="vscode">VS Code Theme</button>
+                    <button class="theme-btn" data-theme="light">Light Theme</button>
+                    <button class="theme-btn" data-theme="dark">Dark Theme</button>
+                </div>
+            </div>
+
+            <div id="comparisonChart"></div>
+        </div>
+
+        <div class="footer">
+            <h3>Ready to Experience Privacy-First AI Coding?</h3>
+            <p>
+                Join thousands of developers who have chosen Astrelium for secure, 
+                cost-effective AI assistance that respects your privacy and works completely offline.
+            </p>
+            <div class="cta-buttons">
+                <a href="#" class="cta-btn">Download Astrelium</a>
+                <a href="#" class="cta-btn secondary">View on GitHub</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inline the comparison chart data and component -->
+    <script>
+        // AI Model Data
+        const aiModelComparison = {
+            models: [
+                {
+                    name: 'Astrelium',
+                    provider: 'Open Source',
+                    category: 'local',
+                    metrics: {
+                        privacy: 100,
+                        costEffectiveness: 95,
+                        speed: 88,
+                        offlineCapability: 100,
+                        vsCodeIntegration: 95,
+                        codeAccuracy: 85,
+                        resourceEfficiency: 90,
+                        communitySupport: 75,
+                        documentationQuality: 80,
+                        easeOfSetup: 85
+                    },
+                    highlights: [
+                        '100% Local Processing',
+                        'No Recurring Fees',
+                        'Complete Privacy',
+                        'Works Offline',
+                        'Open Source',
+                        'VS Code Native'
+                    ],
+                    pricing: 'Free (Open Source)',
+                    description: 'Privacy-first AI coding assistant that runs entirely on your local machine',
+                    color: '#667eea',
+                    accentColor: '#764ba2'
+                },
+                {
+                    name: 'GitHub Copilot',
+                    provider: 'Microsoft/OpenAI',
+                    category: 'cloud',
+                    metrics: {
+                        privacy: 25,
+                        costEffectiveness: 60,
+                        speed: 85,
+                        offlineCapability: 0,
+                        vsCodeIntegration: 98,
+                        codeAccuracy: 92,
+                        resourceEfficiency: 95,
+                        communitySupport: 95,
+                        documentationQuality: 90,
+                        easeOfSetup: 95
+                    },
+                    highlights: [
+                        'Excellent VS Code Integration',
+                        'High Accuracy',
+                        'Large Community',
+                        'Good Documentation'
+                    ],
+                    pricing: '$10-19/month',
+                    description: 'AI pair programmer powered by OpenAI Codex',
+                    color: '#24292f',
+                    accentColor: '#0969da'
+                },
+                {
+                    name: 'Codeium',
+                    provider: 'Codeium',
+                    category: 'cloud',
+                    metrics: {
+                        privacy: 30,
+                        costEffectiveness: 80,
+                        speed: 82,
+                        offlineCapability: 0,
+                        vsCodeIntegration: 85,
+                        codeAccuracy: 88,
+                        resourceEfficiency: 90,
+                        communitySupport: 70,
+                        documentationQuality: 75,
+                        easeOfSetup: 90
+                    },
+                    highlights: [
+                        'Free Tier Available',
+                        'Multiple IDE Support',
+                        'Fast Completions'
+                    ],
+                    pricing: 'Free - $12/month',
+                    description: 'Free AI-powered code completion tool',
+                    color: '#09b6a2',
+                    accentColor: '#00a693'
+                },
+                {
+                    name: 'Tabnine',
+                    provider: 'Tabnine',
+                    category: 'hybrid',
+                    metrics: {
+                        privacy: 60,
+                        costEffectiveness: 65,
+                        speed: 80,
+                        offlineCapability: 70,
+                        vsCodeIntegration: 80,
+                        codeAccuracy: 85,
+                        resourceEfficiency: 75,
+                        communitySupport: 65,
+                        documentationQuality: 70,
+                        easeOfSetup: 80
+                    },
+                    highlights: [
+                        'Hybrid Cloud/Local',
+                        'Team Training',
+                        'Privacy Options'
+                    ],
+                    pricing: '$12-39/month',
+                    description: 'AI code completion with privacy options',
+                    color: '#4c9aff',
+                    accentColor: '#0052cc'
+                },
+                {
+                    name: 'GPT-4',
+                    provider: 'OpenAI',
+                    category: 'cloud',
+                    metrics: {
+                        privacy: 20,
+                        costEffectiveness: 40,
+                        speed: 70,
+                        offlineCapability: 0,
+                        vsCodeIntegration: 60,
+                        codeAccuracy: 95,
+                        resourceEfficiency: 85,
+                        communitySupport: 90,
+                        documentationQuality: 95,
+                        easeOfSetup: 70
+                    },
+                    highlights: [
+                        'Highest Accuracy',
+                        'Advanced Reasoning',
+                        'Extensive Documentation'
+                    ],
+                    pricing: '$20/month + API costs',
+                    description: 'Advanced language model with superior reasoning capabilities',
+                    color: '#10a37f',
+                    accentColor: '#1a7f64'
+                },
+                {
+                    name: 'Claude-3.5',
+                    provider: 'Anthropic',
+                    category: 'cloud',
+                    metrics: {
+                        privacy: 25,
+                        costEffectiveness: 45,
+                        speed: 75,
+                        offlineCapability: 0,
+                        vsCodeIntegration: 50,
+                        codeAccuracy: 90,
+                        resourceEfficiency: 80,
+                        communitySupport: 70,
+                        documentationQuality: 85,
+                        easeOfSetup: 65
+                    },
+                    highlights: [
+                        'Safety-Focused',
+                        'Long Context Window',
+                        'Ethical AI'
+                    ],
+                    pricing: '$20/month + API costs',
+                    description: 'Safety-focused AI with advanced reasoning and long context',
+                    color: '#cc785c',
+                    accentColor: '#a05d42'
+                },
+                {
+                    name: 'Gemini',
+                    provider: 'Google',
+                    category: 'cloud',
+                    metrics: {
+                        privacy: 30,
+                        costEffectiveness: 70,
+                        speed: 85,
+                        offlineCapability: 0,
+                        vsCodeIntegration: 45,
+                        codeAccuracy: 88,
+                        resourceEfficiency: 85,
+                        communitySupport: 75,
+                        documentationQuality: 80,
+                        easeOfSetup: 75
+                    },
+                    highlights: [
+                        'Google Integration',
+                        'Multimodal Capabilities',
+                        'Fast Performance'
+                    ],
+                    pricing: 'Free - $20/month',
+                    description: 'Google\'s multimodal AI with strong performance',
+                    color: '#4285f4',
+                    accentColor: '#1a73e8'
+                },
+                {
+                    name: 'CodeLlama',
+                    provider: 'Meta',
+                    category: 'local',
+                    metrics: {
+                        privacy: 95,
+                        costEffectiveness: 100,
+                        speed: 70,
+                        offlineCapability: 100,
+                        vsCodeIntegration: 40,
+                        codeAccuracy: 75,
+                        resourceEfficiency: 60,
+                        communitySupport: 80,
+                        documentationQuality: 70,
+                        easeOfSetup: 50
+                    },
+                    highlights: [
+                        'Open Source',
+                        'Local Processing',
+                        'Free to Use',
+                        'No API Costs'
+                    ],
+                    pricing: 'Free (Open Source)',
+                    description: 'Open source code-focused language model from Meta',
+                    color: '#1877f2',
+                    accentColor: '#166fe5'
+                }
+            ],
+            categories: {
+                privacy: {
+                    label: 'Privacy Score',
+                    description: 'How well the model protects your code and data privacy',
+                    maxScore: 100,
+                    unit: '%'
+                },
+                costEffectiveness: {
+                    label: 'Cost Effectiveness',
+                    description: 'Value for money considering features and pricing',
+                    maxScore: 100,
+                    unit: '%'
+                },
+                speed: {
+                    label: 'Response Speed',
+                    description: 'How quickly the model provides code suggestions',
+                    maxScore: 100,
+                    unit: '%'
+                },
+                offlineCapability: {
+                    label: 'Offline Capability',
+                    description: 'Ability to work without internet connection',
+                    maxScore: 100,
+                    unit: '%'
+                },
+                vsCodeIntegration: {
+                    label: 'VS Code Integration',
+                    description: 'Quality of integration with Visual Studio Code',
+                    maxScore: 100,
+                    unit: '%'
+                },
+                codeAccuracy: {
+                    label: 'Code Accuracy',
+                    description: 'Quality and correctness of generated code',
+                    maxScore: 100,
+                    unit: '%'
+                }
+            }
+        };
+
+        // Simple comparison chart component for demo
+        class ComparisonChartDemo {
+            constructor(containerId) {
+                this.container = document.getElementById(containerId);
+                this.data = aiModelComparison;
+                this.currentChart = null;
+                this.currentTheme = 'vscode';
+                this.init();
+            }
+
+            init() {
+                this.render();
+                this.setupEventListeners();
+            }
+
+            render() {
+                this.container.innerHTML = this.getHTML();
+                this.applyTheme(this.currentTheme);
+                this.renderChart();
+            }
+
+            getHTML() {
+                return `
+                    <style>
+                        ${this.getCSS()}
+                    </style>
+                    <div class="ai-comparison-wrapper">
+                        <div class="ai-comparison-header">
+                            <div class="header-content">
+                                <h2 class="comparison-title">
+                                    <span class="astrelium-logo">🚀</span>
+                                    AI Coding Assistant Comparison
+                                </h2>
+                                <p class="comparison-subtitle">
+                                    Discover why Astrelium leads in privacy and cost-effectiveness
+                                </p>
+                            </div>
+                            <div class="header-controls">
+                                <div class="chart-type-selector">
+                                    <button class="chart-btn active" data-type="bar">📊 Bar Chart</button>
+                                    <button class="chart-btn" data-type="radar">🎯 Radar Chart</button>
+                                    <button class="chart-btn" data-type="scatter">📈 Scatter Plot</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="comparisonChartCanvas" width="800" height="400"></canvas>
+                        </div>
+                        ${this.getHighlightsHTML()}
+                        ${this.getModelsGridHTML()}
+                    </div>
+                `;
+            }
+
+            getCSS() {
+                return `
+                    .ai-comparison-wrapper {
+                        font-family: 'Inter', sans-serif;
+                        border-radius: 16px;
+                        overflow: hidden;
+                        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+                    }
+
+                    .theme-vscode {
+                        --text-primary: #cccccc;
+                        --text-secondary: #999999;
+                        --bg-primary: #1e1e1e;
+                        --bg-secondary: #252526;
+                        --bg-tertiary: #3c3c3c;
+                        --border-color: #3e3e42;
+                        --accent-color: #667eea;
+                    }
+
+                    .theme-light {
+                        --text-primary: #333333;
+                        --text-secondary: #666666;
+                        --bg-primary: #ffffff;
+                        --bg-secondary: #f8f9fa;
+                        --bg-tertiary: #e9ecef;
+                        --border-color: #dee2e6;
+                        --accent-color: #667eea;
+                    }
+
+                    .theme-dark {
+                        --text-primary: #ffffff;
+                        --text-secondary: #b0b0b0;
+                        --bg-primary: #1a1a1a;
+                        --bg-secondary: #2d2d2d;
+                        --bg-tertiary: #3a3a3a;
+                        --border-color: #404040;
+                        --accent-color: #667eea;
+                    }
+
+                    .ai-comparison-header {
+                        background: linear-gradient(135deg, var(--accent-color) 0%, #764ba2 100%);
+                        color: white;
+                        padding: 32px;
+                        position: relative;
+                    }
+
+                    .comparison-title {
+                        font-size: 28px;
+                        font-weight: 800;
+                        margin: 0 0 8px 0;
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                    }
+
+                    .astrelium-logo {
+                        font-size: 32px;
+                        animation: float 3s ease-in-out infinite;
+                    }
+
+                    @keyframes float {
+                        0%, 100% { transform: translateY(0px); }
+                        50% { transform: translateY(-5px); }
+                    }
+
+                    .comparison-subtitle {
+                        font-size: 16px;
+                        margin: 0 0 24px 0;
+                        opacity: 0.9;
+                    }
+
+                    .chart-type-selector {
+                        display: flex;
+                        gap: 8px;
+                        flex-wrap: wrap;
+                    }
+
+                    .chart-btn {
+                        background: rgba(255, 255, 255, 0.15);
+                        border: 2px solid rgba(255, 255, 255, 0.2);
+                        color: white;
+                        padding: 12px 20px;
+                        border-radius: 12px;
+                        cursor: pointer;
+                        font-size: 14px;
+                        font-weight: 600;
+                        transition: all 0.3s ease;
+                        font-family: inherit;
+                    }
+
+                    .chart-btn:hover {
+                        background: rgba(255, 255, 255, 0.25);
+                        transform: translateY(-2px);
+                    }
+
+                    .chart-btn.active {
+                        background: rgba(255, 255, 255, 0.9);
+                        color: var(--accent-color);
+                    }
+
+                    .chart-container {
+                        padding: 32px;
+                        background: var(--bg-primary);
+                        min-height: 400px;
+                        color: var(--text-primary);
+                    }
+
+                    #comparisonChartCanvas {
+                        max-width: 100%;
+                        height: 400px !important;
+                    }
+
+                    .astrelium-highlights {
+                        background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+                        padding: 32px;
+                        border-top: 1px solid var(--border-color);
+                    }
+
+                    .highlight-header h3 {
+                        font-size: 24px;
+                        font-weight: 700;
+                        margin: 0 0 24px 0;
+                        text-align: center;
+                        background: linear-gradient(135deg, var(--accent-color), #764ba2);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        background-clip: text;
+                        color: var(--text-primary);
+                    }
+
+                    .highlights-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                        gap: 20px;
+                    }
+
+                    .highlight-card {
+                        background: var(--bg-primary);
+                        border: 2px solid var(--border-color);
+                        border-radius: 16px;
+                        padding: 24px;
+                        display: flex;
+                        align-items: center;
+                        gap: 16px;
+                        transition: all 0.3s ease;
+                        color: var(--text-primary);
+                    }
+
+                    .highlight-card:hover {
+                        transform: translateY(-4px);
+                        box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+                    }
+
+                    .highlight-icon {
+                        font-size: 48px;
+                        flex-shrink: 0;
+                    }
+
+                    .highlight-content h4 {
+                        font-size: 18px;
+                        font-weight: 600;
+                        margin: 0 0 8px 0;
+                        color: var(--text-primary);
+                    }
+
+                    .highlight-content p {
+                        margin: 0;
+                        color: var(--text-secondary);
+                        font-size: 14px;
+                        line-height: 1.5;
+                    }
+
+                    .models-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                        gap: 20px;
+                        padding: 32px;
+                        background: var(--bg-secondary);
+                    }
+
+                    .model-card {
+                        background: var(--bg-primary);
+                        border: 2px solid var(--border-color);
+                        border-radius: 12px;
+                        padding: 20px;
+                        transition: all 0.3s ease;
+                        color: var(--text-primary);
+                    }
+
+                    .model-card.featured {
+                        border-color: var(--accent-color);
+                        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+                    }
+
+                    .model-header h4 {
+                        font-size: 18px;
+                        margin: 0 0 8px 0;
+                        color: var(--text-primary);
+                    }
+
+                    .model-provider {
+                        font-size: 12px;
+                        color: var(--text-secondary);
+                        margin-bottom: 12px;
+                    }
+
+                    .model-pricing {
+                        font-size: 16px;
+                        font-weight: 600;
+                        color: var(--accent-color);
+                        margin-bottom: 8px;
+                    }
+
+                    .model-description {
+                        font-size: 14px;
+                        color: var(--text-secondary);
+                        margin-bottom: 16px;
+                        line-height: 1.4;
+                    }
+
+                    @media (max-width: 768px) {
+                        .ai-comparison-header {
+                            padding: 24px 20px;
+                        }
+                        
+                        .comparison-title {
+                            font-size: 24px;
+                        }
+                        
+                        .chart-container {
+                            padding: 20px;
+                        }
+                        
+                        .highlights-grid {
+                            grid-template-columns: 1fr;
+                        }
+                        
+                        .models-grid {
+                            grid-template-columns: 1fr;
+                            padding: 20px;
+                        }
+                    }
+                `;
+            }
+
+            getHighlightsHTML() {
+                return `
+                    <div class="astrelium-highlights">
+                        <div class="highlight-header">
+                            <h3>🌟 Why Choose Astrelium?</h3>
+                        </div>
+                        <div class="highlights-grid">
+                            <div class="highlight-card">
+                                <div class="highlight-icon">🔒</div>
+                                <div class="highlight-content">
+                                    <h4>100% Privacy</h4>
+                                    <p>Your code never leaves your machine. Complete local processing ensures maximum security.</p>
+                                </div>
+                            </div>
+                            <div class="highlight-card">
+                                <div class="highlight-icon">💰</div>
+                                <div class="highlight-content">
+                                    <h4>Zero Recurring Costs</h4>
+                                    <p>Free and open source. No monthly subscriptions or API fees.</p>
+                                </div>
+                            </div>
+                            <div class="highlight-card">
+                                <div class="highlight-icon">📡</div>
+                                <div class="highlight-content">
+                                    <h4>Works Offline</h4>
+                                    <p>Code anywhere, anytime. No internet connection required.</p>
+                                </div>
+                            </div>
+                            <div class="highlight-card">
+                                <div class="highlight-icon">⚡</div>
+                                <div class="highlight-content">
+                                    <h4>Native VS Code</h4>
+                                    <p>Seamlessly integrated extension designed specifically for VS Code.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            getModelsGridHTML() {
+                return `
+                    <div class="models-grid">
+                        ${this.data.models.slice(0, 4).map(model => `
+                            <div class="model-card ${model.name.toLowerCase() === 'astrelium' ? 'featured' : ''}">
+                                <div class="model-header">
+                                    <h4>${model.name}</h4>
+                                </div>
+                                <div class="model-provider">${model.provider}</div>
+                                <div class="model-pricing">${model.pricing}</div>
+                                <div class="model-description">${model.description}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            renderChart() {
+                const canvas = this.container.querySelector('#comparisonChartCanvas');
+                if (!canvas) return;
+
+                if (this.currentChart) {
+                    this.currentChart.destroy();
+                }
+
+                const metrics = ['privacy', 'costEffectiveness', 'speed', 'offlineCapability'];
+                const datasets = metrics.map(metric => ({
+                    label: this.data.categories[metric]?.label || metric,
+                    data: this.data.models.map(model => model.metrics[metric]),
+                    backgroundColor: this.data.models.map(model => 
+                        model.name.toLowerCase() === 'astrelium' ? 
+                        `${model.color}CC` : `${model.color}66`
+                    ),
+                    borderColor: this.data.models.map(model => model.color),
+                    borderWidth: this.data.models.map(model => 
+                        model.name.toLowerCase() === 'astrelium' ? 3 : 1
+                    ),
+                    borderRadius: 6,
+                }));
+
+                this.currentChart = new Chart(canvas, {
+                    type: 'bar',
+                    data: {
+                        labels: this.data.models.map(model => model.name),
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                labels: {
+                                    usePointStyle: true,
+                                    padding: 20,
+                                    font: {
+                                        size: 12,
+                                        family: "'Inter', sans-serif"
+                                    },
+                                    color: this.currentTheme === 'light' ? '#333' : '#ccc'
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                                titleColor: '#fff',
+                                bodyColor: '#fff',
+                                borderColor: '#667eea',
+                                borderWidth: 1,
+                                cornerRadius: 8,
+                                callbacks: {
+                                    afterLabel: (context) => {
+                                        const modelName = context.label;
+                                        const model = this.data.models.find(m => m.name === modelName);
+                                        if (model && model.name.toLowerCase() === 'astrelium') {
+                                            return ['🌟 Featured Model', '🔒 100% Private', '💰 $0/month'];
+                                        }
+                                        return [];
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                grid: {
+                                    color: this.currentTheme === 'light' ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)',
+                                },
+                                ticks: {
+                                    callback: (value) => value + '%',
+                                    color: this.currentTheme === 'light' ? '#333' : '#ccc',
+                                    font: { size: 11 }
+                                }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: {
+                                    maxRotation: 45,
+                                    color: this.currentTheme === 'light' ? '#333' : '#ccc',
+                                    font: { size: 11 }
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 1000,
+                            easing: 'easeOutQuart'
+                        }
+                    }
+                });
+            }
+
+            applyTheme(theme) {
+                this.currentTheme = theme;
+                this.container.className = `theme-${theme}`;
+            }
+
+            setupEventListeners() {
+                // Chart type buttons
+                const chartBtns = this.container.querySelectorAll('.chart-btn');
+                chartBtns.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        chartBtns.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        
+                        const type = btn.getAttribute('data-type');
+                        if (type === 'radar') {
+                            this.renderRadarChart();
+                        } else if (type === 'scatter') {
+                            this.renderScatterChart();
+                        } else {
+                            this.renderChart();
+                        }
+                    });
+                });
+            }
+
+            renderRadarChart() {
+                const canvas = this.container.querySelector('#comparisonChartCanvas');
+                if (!canvas) return;
+
+                if (this.currentChart) {
+                    this.currentChart.destroy();
+                }
+
+                const labels = Object.values(this.data.categories).slice(0, 6).map(cat => cat.label);
+                const datasets = this.data.models.slice(0, 4).map(model => ({
+                    label: model.name,
+                    data: Object.keys(this.data.categories).slice(0, 6).map(key => 
+                        model.metrics[key]
+                    ),
+                    backgroundColor: model.name.toLowerCase() === 'astrelium' ? 
+                        `${model.color}30` : `${model.color}15`,
+                    borderColor: model.color,
+                    borderWidth: model.name.toLowerCase() === 'astrelium' ? 3 : 2,
+                    pointBackgroundColor: model.color,
+                    pointRadius: model.name.toLowerCase() === 'astrelium' ? 6 : 4,
+                    fill: true
+                }));
+
+                this.currentChart = new Chart(canvas, {
+                    type: 'radar',
+                    data: {
+                        labels: labels,
+                        datasets: datasets
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: this.currentTheme === 'light' ? '#333' : '#ccc'
+                                }
+                            }
+                        },
+                        scales: {
+                            r: {
+                                angleLines: { display: false },
+                                suggestedMin: 0,
+                                suggestedMax: 100,
+                                grid: {
+                                    color: this.currentTheme === 'light' ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.2)'
+                                },
+                                pointLabels: {
+                                    font: { size: 10 },
+                                    color: this.currentTheme === 'light' ? '#333' : '#ccc'
+                                },
+                                ticks: { display: false }
+                            }
+                        }
+                    }
+                });
+            }
+
+            renderScatterChart() {
+                const canvas = this.container.querySelector('#comparisonChartCanvas');
+                if (!canvas) return;
+
+                if (this.currentChart) {
+                    this.currentChart.destroy();
+                }
+
+                this.currentChart = new Chart(canvas, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [{
+                            label: 'AI Models',
+                            data: this.data.models.map(model => ({
+                                x: model.metrics.privacy,
+                                y: model.metrics.costEffectiveness,
+                                model: model
+                            })),
+                            backgroundColor: this.data.models.map(model => 
+                                model.name.toLowerCase() === 'astrelium' ? model.color : `${model.color}80`
+                            ),
+                            borderColor: this.data.models.map(model => model.color),
+                            borderWidth: this.data.models.map(model => 
+                                model.name.toLowerCase() === 'astrelium' ? 4 : 2
+                            ),
+                            pointRadius: this.data.models.map(model => 
+                                model.name.toLowerCase() === 'astrelium' ? 12 : 8
+                            )
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    title: () => '',
+                                    label: (context) => {
+                                        const model = context.raw.model;
+                                        return [
+                                            `${model.name} (${model.provider})`,
+                                            `Privacy: ${model.metrics.privacy}%`,
+                                            `Cost Effectiveness: ${model.metrics.costEffectiveness}%`,
+                                            `Pricing: ${model.pricing}`
+                                        ];
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Privacy Score (%)',
+                                    color: this.currentTheme === 'light' ? '#333' : '#ccc'
+                                },
+                                min: 0, max: 100,
+                                ticks: { color: this.currentTheme === 'light' ? '#333' : '#ccc' },
+                                grid: { color: this.currentTheme === 'light' ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)' }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Cost Effectiveness (%)',
+                                    color: this.currentTheme === 'light' ? '#333' : '#ccc'
+                                },
+                                min: 0, max: 100,
+                                ticks: { color: this.currentTheme === 'light' ? '#333' : '#ccc' },
+                                grid: { color: this.currentTheme === 'light' ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)' }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Initialize the demo
+        document.addEventListener('DOMContentLoaded', () => {
+            const chart = new ComparisonChartDemo('comparisonChart');
+
+            // Theme selector
+            const themeButtons = document.querySelectorAll('.theme-btn');
+            themeButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    themeButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    const theme = btn.getAttribute('data-theme');
+                    chart.applyTheme(theme);
+                    chart.renderChart(); // Re-render with new theme
+                });
+            });
+        });
+    </script>
+</body>
+</html>

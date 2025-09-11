@@ -27,6 +27,12 @@
           "id": "astrelium.chatView",
           "name": "Astrelium Chat",
           "when": "true"
+        },
+        {
+          "type": "webview",
+          "id": "astrelium.comparisonView",
+          "name": "AI Model Comparison",
+          "when": "true"
         }
       ]
     },
@@ -35,8 +41,37 @@
         "command": "astrelium.openChat",
         "title": "Open Astrelium Chat",
         "icon": "$(comment-discussion)"
+      },
+      {
+        "command": "astrelium.showComparison",
+        "title": "Show AI Model Comparison",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "astrelium.openComparisonDemo",
+        "title": "Open Comparison Demo",
+        "icon": "$(globe)"
       }
-    ]
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "astrelium.showComparison",
+          "when": "true"
+        },
+        {
+          "command": "astrelium.openComparisonDemo",
+          "when": "true"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "astrelium.showComparison",
+          "when": "view == astrelium.comparisonView",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
