@@ -2427,10 +2427,21 @@ Provide a specific solution to fix this error. If it's a code issue, provide the
                 </div>
                 
                 <script>
+                    // Immediate test to see if JavaScript is executing
+                    console.log('🚀 ASTRELIUM: JavaScript is executing!');
+                    document.title = 'Astrelium - JS Loaded';
+                    
                     const vscode = acquireVsCodeApi();
+                    console.log('🔗 VS Code API acquired:', !!vscode);
+                    
                     const chatContainer = document.getElementById('chatContainer');
                     const messageInput = document.getElementById('messageInput');
                     const sendButton = document.getElementById('sendButton');
+                    
+                    console.log('🎯 DOM Elements found:');
+                    console.log('  - chatContainer:', !!chatContainer);
+                    console.log('  - messageInput:', !!messageInput);
+                    console.log('  - sendButton:', !!sendButton);
                     const filePreview = document.getElementById('filePreview');
                     const fileInput = document.getElementById('fileInput');
                     
@@ -2766,6 +2777,47 @@ Provide a specific solution to fix this error. If it's a code issue, provide the
                             addMessage('Astrelium', message.text, 'ai', true);
                         }
                     });
+                    
+                    // FINAL TEST: Add a simple working test
+                    console.log('🧪 FINAL TEST: Adding emergency fallback listeners');
+                    setTimeout(() => {
+                        const testInput = document.getElementById('messageInput');
+                        const testButton = document.getElementById('sendButton');
+                        
+                        if (testInput && testButton) {
+                            console.log('✅ Emergency test elements found!');
+                            
+                            // Emergency fallback test
+                            testInput.addEventListener('keyup', function(e) {
+                                console.log('🔥 EMERGENCY: Key detected:', e.key);
+                                if (e.key === 'Enter') {
+                                    console.log('🔥 EMERGENCY: Enter detected, trying to send...');
+                                    const msg = testInput.value.trim();
+                                    if (msg) {
+                                        console.log('🔥 EMERGENCY: Sending message:', msg);
+                                        vscode.postMessage({ type: 'message', text: msg });
+                                        testInput.value = '';
+                                    }
+                                }
+                            });
+                            
+                            testButton.addEventListener('click', function() {
+                                console.log('🔥 EMERGENCY: Button clicked!');
+                                const msg = testInput.value.trim();
+                                if (msg) {
+                                    console.log('🔥 EMERGENCY: Sending message:', msg);
+                                    vscode.postMessage({ type: 'message', text: msg });
+                                    testInput.value = '';
+                                }
+                            });
+                            
+                            console.log('🔥 EMERGENCY: Fallback listeners added!');
+                        } else {
+                            console.error('❌ EMERGENCY: Test elements not found!');
+                        }
+                    }, 1000);
+                    
+                    console.log('🎉 ASTRELIUM: Script initialization complete!');
                 </script>
             </body>
             </html>`;
