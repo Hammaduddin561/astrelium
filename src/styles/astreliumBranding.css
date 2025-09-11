@@ -1,0 +1,594 @@
+/**
+ * Astrelium Brand Identity and Design System
+ * Purple/blue gradient theme with space-inspired elements
+ */
+
+:root {
+    /* Primary Brand Colors */
+    --astrelium-primary: #8B5CF6;
+    --astrelium-secondary: #3B82F6;
+    --astrelium-gradient: linear-gradient(135deg, #8B5CF6 0%, #3B82F6 100%);
+    --astrelium-gradient-hover: linear-gradient(135deg, #7C3AED 0%, #2563EB 100%);
+    
+    /* Semantic Colors */
+    --astrelium-success: #10B981;
+    --astrelium-warning: #F59E0B;
+    --astrelium-danger: #EF4444;
+    --astrelium-info: #06B6D4;
+    
+    /* Background & Surface */
+    --astrelium-bg-primary: #0F0F23;
+    --astrelium-bg-secondary: #1E1B4B;
+    --astrelium-bg-tertiary: #312E81;
+    --astrelium-surface: #374151;
+    --astrelium-surface-elevated: #4B5563;
+    
+    /* Text Colors */
+    --astrelium-text-primary: #F9FAFB;
+    --astrelium-text-secondary: #E5E7EB;
+    --astrelium-text-tertiary: #D1D5DB;
+    --astrelium-text-muted: #9CA3AF;
+    
+    /* Interactive States */
+    --astrelium-hover: rgba(139, 92, 246, 0.1);
+    --astrelium-active: rgba(139, 92, 246, 0.2);
+    --astrelium-focus: rgba(139, 92, 246, 0.3);
+    
+    /* Spacing & Sizing */
+    --astrelium-radius-sm: 6px;
+    --astrelium-radius-md: 12px;
+    --astrelium-radius-lg: 16px;
+    --astrelium-radius-xl: 24px;
+    
+    /* Shadows */
+    --astrelium-shadow-sm: 0 2px 8px rgba(139, 92, 246, 0.15);
+    --astrelium-shadow-md: 0 4px 16px rgba(139, 92, 246, 0.2);
+    --astrelium-shadow-lg: 0 8px 32px rgba(139, 92, 246, 0.25);
+    --astrelium-shadow-xl: 0 12px 48px rgba(139, 92, 246, 0.3);
+    
+    /* Animations */
+    --astrelium-transition-fast: 0.15s ease-out;
+    --astrelium-transition-normal: 0.3s ease-out;
+    --astrelium-transition-slow: 0.5s ease-out;
+}
+
+/* Brand Typography */
+.astrelium-font-hero {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'SF Pro Display', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+.astrelium-font-heading {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'SF Pro Display', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+}
+
+.astrelium-font-body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'SF Pro Text', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+.astrelium-font-mono {
+    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+    font-weight: 500;
+}
+
+/* Brand Gradients */
+.astrelium-gradient {
+    background: var(--astrelium-gradient);
+}
+
+.astrelium-gradient-text {
+    background: var(--astrelium-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.astrelium-gradient-border {
+    position: relative;
+    background: var(--astrelium-bg-secondary);
+    border-radius: var(--astrelium-radius-md);
+}
+
+.astrelium-gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 2px;
+    background: var(--astrelium-gradient);
+    border-radius: inherit;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+}
+
+/* Hero Elements */
+.astrelium-hero {
+    position: relative;
+    background: var(--astrelium-gradient);
+    border-radius: var(--astrelium-radius-xl);
+    padding: 3rem 2rem;
+    text-align: center;
+    overflow: hidden;
+}
+
+.astrelium-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.1) 0%, transparent 60%),
+                radial-gradient(circle at 80% 80%, rgba(255,255,255,0.05) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.astrelium-hero-title {
+    position: relative;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: white;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    margin-bottom: 1rem;
+    z-index: 1;
+}
+
+.astrelium-hero-subtitle {
+    position: relative;
+    font-size: clamp(1rem, 3vw, 1.25rem);
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 2rem;
+    z-index: 1;
+}
+
+/* Badge Components */
+.astrelium-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all var(--astrelium-transition-normal);
+    backdrop-filter: blur(10px);
+}
+
+.astrelium-badge-primary {
+    background: rgba(139, 92, 246, 0.2);
+    color: var(--astrelium-primary);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.astrelium-badge-success {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--astrelium-success);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.astrelium-badge-warning {
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--astrelium-warning);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.astrelium-badge-info {
+    background: rgba(6, 182, 212, 0.2);
+    color: var(--astrelium-info);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.astrelium-badge:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--astrelium-shadow-sm);
+}
+
+/* Winner Badge */
+.astrelium-winner-badge {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    background: var(--astrelium-gradient);
+    color: white;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: var(--astrelium-shadow-sm);
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(139, 92, 246, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(139, 92, 246, 0.8);
+    }
+}
+
+/* Card Components */
+.astrelium-card {
+    background: rgba(55, 65, 81, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: var(--astrelium-radius-lg);
+    padding: 1.5rem;
+    transition: all var(--astrelium-transition-normal);
+}
+
+.astrelium-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(139, 92, 246, 0.4);
+    box-shadow: var(--astrelium-shadow-lg);
+}
+
+.astrelium-card-hero {
+    border-color: var(--astrelium-success);
+    background: linear-gradient(135deg, 
+        rgba(16, 185, 129, 0.1) 0%, 
+        rgba(139, 92, 246, 0.1) 100%);
+}
+
+.astrelium-card-competitor {
+    border-color: rgba(239, 68, 68, 0.3);
+    background: rgba(239, 68, 68, 0.05);
+}
+
+/* Button Components */
+.astrelium-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--astrelium-radius-md);
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all var(--astrelium-transition-normal);
+    outline: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.astrelium-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left var(--astrelium-transition-slow);
+}
+
+.astrelium-btn:hover::before {
+    left: 100%;
+}
+
+.astrelium-btn-primary {
+    background: var(--astrelium-gradient);
+    color: white;
+    box-shadow: var(--astrelium-shadow-md);
+}
+
+.astrelium-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--astrelium-shadow-lg);
+}
+
+.astrelium-btn-secondary {
+    background: rgba(55, 65, 81, 0.8);
+    color: var(--astrelium-text-secondary);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.astrelium-btn-secondary:hover {
+    background: rgba(139, 92, 246, 0.2);
+    color: white;
+    border-color: rgba(139, 92, 246, 0.5);
+}
+
+.astrelium-btn-outline {
+    background: transparent;
+    color: var(--astrelium-primary);
+    border: 2px solid var(--astrelium-primary);
+}
+
+.astrelium-btn-outline:hover {
+    background: var(--astrelium-primary);
+    color: white;
+}
+
+/* Progress Bar Components */
+.astrelium-progress {
+    width: 100%;
+    height: 8px;
+    background: rgba(55, 65, 81, 0.8);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.astrelium-progress-bar {
+    height: 100%;
+    background: var(--astrelium-gradient);
+    border-radius: 4px;
+    transition: width 0.8s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.astrelium-progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-image: linear-gradient(
+        -45deg,
+        rgba(255, 255, 255, .2) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, .2) 50%,
+        rgba(255, 255, 255, .2) 75%,
+        transparent 75%,
+        transparent
+    );
+    background-size: 50px 50px;
+    animation: move 2s linear infinite;
+}
+
+@keyframes move {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 50px 50px;
+    }
+}
+
+/* Metric Display */
+.astrelium-metric {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(55, 65, 81, 0.4);
+    border-radius: var(--astrelium-radius-md);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    transition: all var(--astrelium-transition-normal);
+}
+
+.astrelium-metric:hover {
+    border-color: rgba(139, 92, 246, 0.4);
+    transform: translateX(4px);
+}
+
+.astrelium-metric-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.astrelium-metric-content {
+    flex-grow: 1;
+}
+
+.astrelium-metric-label {
+    font-size: 0.875rem;
+    color: var(--astrelium-text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.astrelium-metric-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--astrelium-primary);
+}
+
+.astrelium-metric-hero .astrelium-metric-value {
+    color: var(--astrelium-success);
+}
+
+/* Comparison Table */
+.astrelium-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(55, 65, 81, 0.6);
+    border-radius: var(--astrelium-radius-lg);
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.astrelium-table th,
+.astrelium-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.astrelium-table th {
+    background: rgba(139, 92, 246, 0.2);
+    color: var(--astrelium-primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.875rem;
+}
+
+.astrelium-table th.hero {
+    background: var(--astrelium-gradient);
+    color: white;
+}
+
+.astrelium-table tr:hover {
+    background: rgba(139, 92, 246, 0.05);
+}
+
+.astrelium-table .hero-row {
+    background: rgba(16, 185, 129, 0.1);
+    border-left: 4px solid var(--astrelium-success);
+}
+
+/* Status Indicators */
+.astrelium-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.astrelium-status-excellent {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--astrelium-success);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.astrelium-status-good {
+    background: rgba(6, 182, 212, 0.2);
+    color: var(--astrelium-info);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.astrelium-status-fair {
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--astrelium-warning);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.astrelium-status-poor {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--astrelium-danger);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* Space-themed Decorations */
+.astrelium-stars {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.astrelium-star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: twinkle 3s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 0.3; }
+}
+
+/* Floating Animation */
+.astrelium-float {
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .astrelium-hero {
+        padding: 2rem 1rem;
+    }
+    
+    .astrelium-hero-title {
+        font-size: 2rem;
+    }
+    
+    .astrelium-hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    .astrelium-card {
+        padding: 1rem;
+    }
+    
+    .astrelium-btn {
+        padding: 0.625rem 1.25rem;
+    }
+}
+
+/* Dark Theme Optimization */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --astrelium-bg-primary: #0A0A0F;
+        --astrelium-bg-secondary: #151226;
+        --astrelium-surface: #2D2A4A;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    :root {
+        --astrelium-gradient: linear-gradient(135deg, #9333EA 0%, #2563EB 100%);
+        --astrelium-text-primary: #FFFFFF;
+        --astrelium-text-secondary: #F3F4F6;
+    }
+    
+    .astrelium-card,
+    .astrelium-metric,
+    .astrelium-table {
+        border-width: 2px;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .astrelium-btn::before,
+    .astrelium-progress-bar::after,
+    .astrelium-star,
+    .astrelium-float {
+        animation: none;
+    }
+    
+    .astrelium-btn,
+    .astrelium-card,
+    .astrelium-metric {
+        transition: none;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .astrelium-hero,
+    .astrelium-card,
+    .astrelium-metric {
+        background: white !important;
+        color: black !important;
+        border: 1px solid #ccc !important;
+    }
+    
+    .astrelium-gradient-text {
+        color: #8B5CF6 !important;
+        -webkit-text-fill-color: #8B5CF6 !important;
+    }
+}

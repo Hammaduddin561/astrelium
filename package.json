@@ -27,6 +27,12 @@
           "id": "astrelium.chatView",
           "name": "Astrelium Chat",
           "when": "true"
+        },
+        {
+          "type": "webview",
+          "id": "astrelium.comparisonDashboard",
+          "name": "🆚 Astrelium vs Competitors",
+          "when": "true"
         }
       ]
     },
@@ -35,6 +41,16 @@
         "command": "astrelium.openChat",
         "title": "Open Astrelium Chat",
         "icon": "$(comment-discussion)"
+      },
+      {
+        "command": "astrelium.openComparison",
+        "title": "Compare Astrelium vs AI Models",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "astrelium.exportComparison",
+        "title": "Export Comparison Data",
+        "icon": "$(export)"
       }
     ]
   },
