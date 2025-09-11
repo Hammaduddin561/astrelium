@@ -377,7 +377,7 @@ limitations under the License.
   
 ### 🚀 Ready to revolutionize your coding experience?
 
-<img src="https://raw.githubusercontent.com/Hammaduddin561/astrelium/main/assets/astronaut-logo.png" alt="Astrelium Astronaut" width="100"/>
+👨‍🚀 **ASTRELIUM** 🌌
 
 **Install Astrelium and unleash the power of local AI assistance!**
 
