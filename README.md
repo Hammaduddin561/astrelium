@@ -4,11 +4,13 @@
 
 ## 📊 Project Stats
 
-![GitHub stars](https://img.shields.io/github/stars/Hammaduddin561/astrelium?style=social)
-![GitHub forks](https://img.shields.io/github/forks/Hammaduddin561/astrelium?style=social)
-![GitHub issues](https://img.shields.io/github/issues/Hammaduddin561/astrelium)
-![GitHub license](https://img.shields.io/github/license/Hammaduddin561/astrelium)
-![VS Code version](https://img.shields.io/badge/VS%20Code-%3E%3D1.80.0-blue)
+[![GitHub stars](https://img.shields.io/github/stars/Hammaduddin561/astrelium?style=social)](https://github.com/Hammaduddin561/astrelium/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/Hammaduddin561/astrelium?style=social)](https://github.com/Hammaduddin561/astrelium/network/members)
+[![GitHub issues](https://img.shields.io/github/issues/Hammaduddin561/astrelium)](https://github.com/Hammaduddin561/astrelium/issues)
+[![GitHub license](https://img.shields.io/github/license/Hammaduddin561/astrelium)](https://github.com/Hammaduddin561/astrelium/blob/main/LICENSE)
+[![VS Code version](https://img.shields.io/badge/VS%20Code-%3E%3D1.80.0-blue)](https://code.visualstudio.com/)
+[![GitHub last commit](https://img.shields.io/github/last-commit/Hammaduddin561/astrelium)](https://github.com/Hammaduddin561/astrelium/commits/main)
+[![GitHub release](https://img.shields.io/github/v/release/Hammaduddin561/astrelium?include_prereleases)](https://github.com/Hammaduddin561/astrelium/releases)
 
 </div>
 
