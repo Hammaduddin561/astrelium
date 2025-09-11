@@ -8,7 +8,80 @@ Astrelium is a powerful, intelligent local-first coding assistant built as a VS 
 
 ---
 
-## 🚀 Features
+## 🎯 Advanced Commands
+
+Astrelium recognizes natural language commands for advanced operations:
+
+### Code Analysis & Review
+- `"review code"` or `"code review"` - Comprehensive code quality analysis
+- `"explain code"` or `"explain this"` - Detailed code explanations
+- `"analyze performance"` - Performance analysis with optimization suggestions
+- `"check security"` or `"security audit"` - Security vulnerability scanning
+
+### Code Generation & Modification
+- `"generate tests"` or `"create tests"` - Generate comprehensive test suites
+- `"optimize code"` or `"optimize this"` - Code optimization with performance improvements
+- `"refactor [pattern]"` - Apply specific design patterns (mvc, singleton, factory, observer)
+- `"generate documentation"` - Create project documentation
+
+### Project Management
+- `"suggest architecture"` - Architectural improvements and design patterns
+- `"api documentation"` - Generate API documentation with OpenAPI specs
+- `"migrate to [technology]"` - Create migration plans between technologies
+
+### Example Commands:
+```
+"Review this code for best practices"
+"Generate unit tests for the current file"
+"Optimize this code for better performance"
+"Suggest architectural improvements for this project"
+"Create API documentation"
+"Refactor using MVC pattern"
+"Migrate this project to React"
+"Check for security vulnerabilities"
+```
+
+---
+
+## 📦 Setup
+
+1. **Install Ollama**: Download from [ollama.com](https://ollama.com)
+2. **Install Model**: Run `ollama pull gpt-oss:20b` in terminal
+3. **Start Ollama**: Run `ollama serve` or `ollama run gpt-oss:20b`
+4. **Clone Repository**: `git clone https://github.com/your-repo/astrelium.git`
+5. **Install Dependencies**: `cd astrelium && npm install`
+6. **Compile Extension**: `npm run compile`
+7. **Launch**: Press `F5` in VS Code to start Extension Development Host
+
+
+
+## 🧠 Usage
+
+### Basic Chat
+1. Open the Astrelium sidebar panel (🌌 icon)
+2. Type your coding questions or requests
+3. Get intelligent, context-aware responses
+
+### Project Creation
+1. Type: `"Create a [language] [project type] with [features]"`
+2. Astrelium analyzes requirements and creates complete project structure
+3. Automatically compiles, tests, and debugs the code
+4. Opens created files in VS Code for immediate editing
+
+### Advanced Operations
+1. Open a file you want to analyze/modify
+2. Use natural language commands for specific operations
+3. Astrelium provides detailed analysis and automated improvements
+4. Review changes and backups created automatically
+
+### File Sharing
+1. Click 📎 button to upload files (any format, up to 10MB)
+2. Astrelium analyzes content and provides relevant assistance
+3. Supports images, documents, code files, and more
+
+---
+
+## � Features
 
 <div align="center">
   <img src="https://raw.githubusercontent.com/Hammaduddin561/astrelium/main/assets/astrelium-screenshot.png" alt="Astrelium in Action" width="700"/>
@@ -62,99 +135,7 @@ Astrelium is a powerful, intelligent local-first coding assistant built as a VS 
 
 ---
 
-## 🎯 Advanced Commands
-
-Astrelium recognizes natural language commands for advanced operations:
-
-### Code Analysis & Review
-- `"review code"` or `"code review"` - Comprehensive code quality analysis
-- `"explain code"` or `"explain this"` - Detailed code explanations
-- `"analyze performance"` - Performance analysis with optimization suggestions
-- `"check security"` or `"security audit"` - Security vulnerability scanning
-
-### Code Generation & Modification
-- `"generate tests"` or `"create tests"` - Generate comprehensive test suites
-- `"optimize code"` or `"optimize this"` - Code optimization with performance improvements
-- `"refactor [pattern]"` - Apply specific design patterns (mvc, singleton, factory, observer)
-- `"generate documentation"` - Create project documentation
-
-### Project Management
-- `"suggest architecture"` - Architectural improvements and design patterns
-- `"api documentation"` - Generate API documentation with OpenAPI specs
-- `"migrate to [technology]"` - Create migration plans between technologies
-
-### Example Commands:
-```
-"Review this code for best practices"
-"Generate unit tests for the current file"
-"Optimize this code for better performance"
-"Suggest architectural improvements for this project"
-"Create API documentation"
-"Refactor using MVC pattern"
-"Migrate this project to React"
-"Check for security vulnerabilities"
-```
-
----
-
-## 📦 Setup
-
-1. **Install Ollama**: Download from [ollama.com](https://ollama.com)
-2. **Install Model**: Run `ollama pull gpt-oss:20b` in terminal
-3. **Start Ollama**: Run `ollama serve` or `ollama run gpt-oss:20b`
-4. **Clone Repository**: `git clone https://github.com/your-repo/astrelium.git`
-5. **Install Dependencies**: `cd astrelium && npm install`
-6. **Compile Extension**: `npm run compile`
-7. **Launch**: Press `F5` in VS Code to start Extension Development Host
-
----
-
-## 📸 Screenshots
-
-<div align="center">
-  
-### 🌌 Welcome Interface
-<img src="https://raw.githubusercontent.com/Hammaduddin561/astrelium/main/assets/astronaut-logo.png" alt="Astrelium Logo" width="150"/>
-
-### 💬 Chat Interface
-<img src="https://raw.githubusercontent.com/Hammaduddin561/astrelium/main/assets/astrelium-interface.jpg" alt="Astrelium Chat Interface" width="500"/>
-<p><em>Astrelium's intuitive chat interface with modern design and intelligent responses</em></p>
-
-### 🖥️ Live Screenshot
-<img src="https://raw.githubusercontent.com/Hammaduddin561/astrelium/main/assets/astrelium-screenshot.png" alt="Astrelium Live Screenshot" width="600"/>
-<p><em>Latest screenshot showing Astrelium in action</em></p>
-
-</div>
-
----
-
-## 🧠 Usage
-
-### Basic Chat
-1. Open the Astrelium sidebar panel (🌌 icon)
-2. Type your coding questions or requests
-3. Get intelligent, context-aware responses
-
-### Project Creation
-1. Type: `"Create a [language] [project type] with [features]"`
-2. Astrelium analyzes requirements and creates complete project structure
-3. Automatically compiles, tests, and debugs the code
-4. Opens created files in VS Code for immediate editing
-
-### Advanced Operations
-1. Open a file you want to analyze/modify
-2. Use natural language commands for specific operations
-3. Astrelium provides detailed analysis and automated improvements
-4. Review changes and backups created automatically
-
-### File Sharing
-1. Click 📎 button to upload files (any format, up to 10MB)
-2. Astrelium analyzes content and provides relevant assistance
-3. Supports images, documents, code files, and more
-
----
-
-## 🔗 Local Model Requirements
+## �🔗 Local Model Requirements
 
 Ensure Ollama is running with the gpt-oss:20b model:
 
