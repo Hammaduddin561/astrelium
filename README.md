@@ -1,10 +1,6 @@
 <div align="center">
   
-![Astrelium Banner](https://raw.githubusercontent.com/Hammaduddin561/astrelium/main/assets/astrelium-thumbnail.jpg)
-
-# 🌌 Astrelium: Advanced AI Coding Assistant for VS Code
-
-*Local Coding Agent for VS Code*
+![Astrelium Banner](https://raw.githubusercontent.com/Hammaduddin561/astrelium/main/assets/astrelium-banner.jpg)
 
 </div>
 
