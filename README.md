@@ -1,11 +1,12 @@
+<div align="center">
+  
+![Astrelium Banner](https://raw.githubusercontent.com/Hammaduddin561/astrelium/main/assets/astrelium-thumbnail.jpg)
+
 # 🌌 Astrelium: Advanced AI Coding Assistant for VS Code
 
-<div align="center">
-  <img src="https://raw.githubusercontent.com/Hammaduddin561/astrelium/main/assets/astronaut-logo.png" alt="Astrelium Logo" width="200"/>
-  <h3>Your intelligent coding companion</h3>
-</div>
+*Local Coding Agent for VS Code*
 
-![Astrelium Interface](https://raw.githubusercontent.com/Hammaduddin561/astrelium/main/assets/astrelium-interface.jpg)
+</div>
 
 Astrelium is a powerful, intelligent local-first coding assistant built as a VS Code extension. It connects to your own LLM (like `gpt-oss:20b` via Ollama) and provides comprehensive development capabilities including automated project creation, workspace analysis, code review, testing, debugging, and much more—all offline with no cloud dependencies.
 
@@ -14,8 +15,8 @@ Astrelium is a powerful, intelligent local-first coding assistant built as a VS 
 ## 🚀 Features
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Hammaduddin561/astrelium/main/assets/astrelium-interface.jpg" alt="Astrelium Chat Interface" width="600"/>
-  <p><em>Modern chat interface with intelligent code assistance</em></p>
+  <img src="https://raw.githubusercontent.com/Hammaduddin561/astrelium/main/assets/astrelium-screenshot.png" alt="Astrelium in Action" width="700"/>
+  <p><em>Astrelium in action - Modern chat interface with intelligent code assistance</em></p>
 </div>
 
 ### 🧠 **Smart AI Assistant**
@@ -122,6 +123,10 @@ Astrelium recognizes natural language commands for advanced operations:
 ### 💬 Chat Interface
 <img src="https://raw.githubusercontent.com/Hammaduddin561/astrelium/main/assets/astrelium-interface.jpg" alt="Astrelium Chat Interface" width="500"/>
 <p><em>Astrelium's intuitive chat interface with modern design and intelligent responses</em></p>
+
+### 🖥️ Live Screenshot
+<img src="https://raw.githubusercontent.com/Hammaduddin561/astrelium/main/assets/astrelium-screenshot.png" alt="Astrelium Live Screenshot" width="600"/>
+<p><em>Latest screenshot showing Astrelium in action</em></p>
 
 </div>
 
