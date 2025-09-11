@@ -62,7 +62,12 @@ class ChatViewProvider implements vscode.WebviewViewProvider {
             localResourceRoots: [this._extensionUri]
         };
 
-        webviewView.webview.html = this._getHtmlForWebview();
+        const htmlContent = this._getHtmlForWebview();
+        console.log('🔧 ASTRELIUM: Setting webview HTML content...');
+        console.log('🔧 HTML length:', htmlContent.length);
+        console.log('🔧 Scripts enabled:', webviewView.webview.options.enableScripts);
+        
+        webviewView.webview.html = htmlContent;
 
         webviewView.webview.onDidReceiveMessage(
             async (message) => {
@@ -2427,397 +2432,140 @@ Provide a specific solution to fix this error. If it's a code issue, provide the
                 </div>
                 
                 <script>
-                    // Immediate test to see if JavaScript is executing
-                    console.log('🚀 ASTRELIUM: JavaScript is executing!');
-                    document.title = 'Astrelium - JS Loaded';
+                    // MINIMAL TEST VERSION
+                    console.log('🚀🚀🚀 ASTRELIUM: JavaScript STARTING!');
                     
-                    const vscode = acquireVsCodeApi();
-                    console.log('🔗 VS Code API acquired:', !!vscode);
-                    
-                    const chatContainer = document.getElementById('chatContainer');
-                    const messageInput = document.getElementById('messageInput');
-                    const sendButton = document.getElementById('sendButton');
-                    
-                    console.log('🎯 DOM Elements found:');
-                    console.log('  - chatContainer:', !!chatContainer);
-                    console.log('  - messageInput:', !!messageInput);
-                    console.log('  - sendButton:', !!sendButton);
-                    const filePreview = document.getElementById('filePreview');
-                    const fileInput = document.getElementById('fileInput');
-                    
-                    // Debug: Check if elements are found
-                    console.log('messageInput found:', messageInput);
-                    console.log('sendButton found:', sendButton);
-                    console.log('chatContainer found:', chatContainer);
-                    
-                    if (!messageInput) {
-                        console.error('messageInput element not found!');
-                    }
-                    if (!sendButton) {
-                        console.error('sendButton element not found!');
+                    // Test VS Code API
+                    let vscode;
+                    try {
+                        vscode = acquireVsCodeApi();
+                        console.log('✅ VS Code API acquired');
+                    } catch (error) {
+                        console.error('❌ VS Code API failed:', error);
                     }
                     
-                    let uploadedFiles = [];
-
-                    function parseMarkdown(text) {
-                        // Basic markdown parsing
-                        text = text.replace(/\`\`\`([\\w]*)[\\n]?([\\s\\S]*?)\`\`\`/g, '<pre><code>$2</code></pre>');
-                        text = text.replace(/\`([^\`]+)\`/g, '<code>$1</code>');
-                        text = text.replace(/\\n/g, '<br>');
-                        return text;
-                    }
-
-                    function clearChat() {
-                        chatContainer.innerHTML = \`
-                            <div style="text-align: center; padding: 16px; opacity: 0.8;">
-                                <div style="font-size: 32px; margin-bottom: 8px;">🧹</div>
-                                <h3 style="margin: 0 0 4px 0; font-weight: 600; font-size: 15px;">Chat Cleared</h3>
-                                <p style="margin: 0; opacity: 0.7; font-size: 12px;">Ready for a fresh conversation!</p>
-                                <div style="margin-top: 8px; font-size: 10px; opacity: 0.6;">
-                                    Try: "Create a Python web app" or "Make a React component"
-                                </div>
-                            </div>
-                        \`;
-                    }
-
-                    function getFileIcon(fileName, fileType) {
-                        const ext = fileName.split('.').pop()?.toLowerCase();
+                    // Function to add messages to chat
+                    function addMessageToChat(sender, text, type) {
+                        const chatContainer = document.getElementById('chatContainer');
+                        if (!chatContainer) return;
                         
-                        // Image files
-                        if (fileType.startsWith('image/')) return '🖼️';
-                        
-                        // Document files
-                        if (ext === 'pdf') return '📄';
-                        if (['doc', 'docx'].includes(ext)) return '📝';
-                        if (['xls', 'xlsx'].includes(ext)) return '📊';
-                        if (['ppt', 'pptx'].includes(ext)) return '📺';
-                        
-                        // Code files
-                        if (['js', 'ts', 'jsx', 'tsx'].includes(ext)) return '⚡';
-                        if (['py'].includes(ext)) return '🐍';
-                        if (['java'].includes(ext)) return '☕';
-                        if (['cpp', 'c', 'h'].includes(ext)) return '⚙️';
-                        if (['html', 'htm'].includes(ext)) return '🌐';
-                        if (['css', 'scss', 'sass'].includes(ext)) return '🎨';
-                        if (['json', 'xml', 'yaml', 'yml'].includes(ext)) return '📋';
-                        
-                        // Archive files
-                        if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) return '📦';
-                        
-                        // Text files
-                        if (['txt', 'md', 'log'].includes(ext)) return '📄';
-                        
-                        // Default
-                        return '📁';
-                    }
-
-                    function updateFilePreview() {
-                        if (uploadedFiles.length === 0) {
-                            filePreview.classList.remove('show');
-                            return;
-                        }
-                        
-                        filePreview.classList.add('show');
-                        filePreview.innerHTML = uploadedFiles.map((file, index) => \`
-                            <div class="file-item">
-                                <span>\${getFileIcon(file.name, file.type)} \${file.name} (\${(file.size / 1024).toFixed(1)}KB)</span>
-                                <button class="file-remove" onclick="removeFile(\${index})">✕</button>
-                            </div>
-                        \`).join('');
-                    }
-                    
-                    function removeFile(index) {
-                        uploadedFiles.splice(index, 1);
-                        updateFilePreview();
-                    }
-                    
-                    function handleFileUpload(files) {
-                        for (let file of files) {
-                            if (file.size > 10 * 1024 * 1024) { // 10MB limit
-                                addMessage('System', \`File "\${file.name}" is too large. Maximum size is 10MB.\`, 'system');
-                                continue;
-                            }
-                            uploadedFiles.push(file);
-                        }
-                        updateFilePreview();
-                    }
-                    
-                    fileInput.addEventListener('change', (e) => {
-                        handleFileUpload(e.target.files);
-                        e.target.value = '';
-                    });
-
-                    function addMessage(sender, message, type, useTyping = false) {
-                        const messageElement = document.createElement('div');
-                        messageElement.className = 'message ' + type;
-                        
-                        const headerElement = document.createElement('div');
-                        headerElement.className = 'message-header';
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = 'message ' + type;
                         
                         if (type === 'user') {
-                            headerElement.innerHTML = '👤 <span style="color: rgba(102, 126, 234, 0.8);">You</span>';
-                        } else if (type === 'ai') {
-                            headerElement.innerHTML = '🤖 <span style="color: rgba(118, 75, 162, 0.8);">Astrelium</span>';
+                            messageDiv.innerHTML = \`
+                                <div class="message-header">
+                                    <span class="avatar">👤</span>
+                                    <span class="name">You</span>
+                                </div>
+                                <div class="message-content">\${text}</div>
+                            \`;
                         } else {
-                            headerElement.innerHTML = '⚙️ <span style="color: rgba(86, 171, 47, 0.8);">System</span>';
+                            messageDiv.innerHTML = \`
+                                <div class="message-header">
+                                    <span class="avatar">🤖</span>
+                                    <span class="name">Astrelium</span>
+                                </div>
+                                <div class="message-content">\${text}</div>
+                            \`;
                         }
                         
-                        const contentElement = document.createElement('div');
-                        contentElement.className = 'message-content';
-                        
-                        messageElement.appendChild(headerElement);
-                        messageElement.appendChild(contentElement);
-                        chatContainer.appendChild(messageElement);
-                        
-                        if (useTyping && type === 'ai') {
-                            // Add typing animation for AI responses
-                            typeText(contentElement, message);
-                        } else {
-                            const formattedMessage = type === 'ai' ? parseMarkdown(message) : message;
-                            contentElement.innerHTML = formattedMessage;
-                        }
-                        
+                        chatContainer.appendChild(messageDiv);
                         chatContainer.scrollTop = chatContainer.scrollHeight;
-                        return messageElement;
+                        console.log('✅ Added', type, 'message to chat');
                     }
                     
-                    function typeText(element, text, speed = 30) {
-                        element.innerHTML = '';
-                        let i = 0;
-                        const formattedText = parseMarkdown(text);
-                        
-                        // Create a temporary element to get plain text from HTML
-                        const tempDiv = document.createElement('div');
-                        tempDiv.innerHTML = formattedText;
-                        const plainText = tempDiv.textContent || tempDiv.innerText || '';
-                        
-                        function typeChar() {
-                            if (i < plainText.length) {
-                                // Calculate how much text to show
-                                const currentText = plainText.substring(0, i + 1);
-                                
-                                // Find the corresponding HTML by matching text length
-                                const tempDiv2 = document.createElement('div');
-                                tempDiv2.innerHTML = formattedText;
-                                const walker = document.createTreeWalker(
-                                    tempDiv2,
-                                    NodeFilter.SHOW_TEXT,
-                                    null,
-                                    false
-                                );
-                                
-                                let charCount = 0;
-                                let lastNode = null;
-                                while (walker.nextNode()) {
-                                    const node = walker.currentNode;
-                                    if (charCount + node.textContent.length >= i + 1) {
-                                        // Truncate this text node
-                                        const truncateAt = (i + 1) - charCount;
-                                        node.textContent = node.textContent.substring(0, truncateAt);
-                                        break;
-                                    }
-                                    charCount += node.textContent.length;
-                                    lastNode = node;
-                                }
-                                
-                                // Remove any remaining nodes
-                                const allNodes = tempDiv2.querySelectorAll('*');
-                                let shouldRemove = false;
-                                for (let node of allNodes) {
-                                    if (shouldRemove) {
-                                        node.remove();
-                                    }
-                                    if (node.contains(walker.currentNode)) {
-                                        shouldRemove = true;
-                                    }
-                                }
-                                
-                                element.innerHTML = tempDiv2.innerHTML + '<span class="typing-cursor">|</span>';
-                                i++;
-                                
-                                chatContainer.scrollTop = chatContainer.scrollHeight;
-                                setTimeout(typeChar, speed + Math.random() * 20);
-                            } else {
-                                // Typing complete
-                                element.innerHTML = formattedText;
-                                chatContainer.scrollTop = chatContainer.scrollHeight;
-                            }
-                        }
-                        
-                        typeChar();
-                    }
-
-                    async function sendMessage() {
-                        const message = messageInput.value.trim();
-                        if (!message && uploadedFiles.length === 0) return;
-                        
-                        let fullMessage = message;
-                        
-                        // Process uploaded files
-                        if (uploadedFiles.length > 0) {
-                            const fileContents = [];
-                            
-                            for (let file of uploadedFiles) {
-                                if (file.type.startsWith('image/')) {
-                                    fileContents.push(\`[Image: \${file.name} - \${file.type}]\`);
-                                } else if (file.type === 'application/pdf') {
-                                    fileContents.push(\`[PDF Document: \${file.name} - Cannot read PDF content, but file is attached]\`);
-                                } else if (file.type.includes('document') || file.type.includes('word') || file.type.includes('excel') || file.type.includes('powerpoint')) {
-                                    fileContents.push(\`[Document: \${file.name} - \${file.type} - Cannot read binary document content, but file is attached]\`);
-                                } else {
-                                    try {
-                                        const text = await file.text();
-                                        if (text.trim()) {
-                                            fileContents.push(\`[File: \${file.name}]\\n\${text}\`);
-                                        } else {
-                                            fileContents.push(\`[File: \${file.name} - File appears to be empty or binary]\`);
-                                        }
-                                    } catch (error) {
-                                        fileContents.push(\`[File: \${file.name} - Could not read content (binary file)]\`);
-                                    }
-                                }
-                            }
-                            
-                            if (fileContents.length > 0) {
-                                fullMessage = fullMessage + '\\n\\n' + fileContents.join('\\n\\n');
-                            }
-                        }
-                        
-                        const displayMessage = message + (uploadedFiles.length > 0 ? \` (+\${uploadedFiles.length} file\${uploadedFiles.length > 1 ? 's' : ''})\` : '');
-                        addMessage('You', displayMessage, 'user');
-                        
-                        vscode.postMessage({ type: 'message', text: fullMessage });
-                        messageInput.value = '';
-                        uploadedFiles = [];
-                        updateFilePreview();
-                    }
-
-                    // Setup event listeners with direct inline handlers
-                    console.log('Setting up input event listeners...');
-                    console.log('messageInput found:', !!messageInput);
-                    console.log('sendButton found:', !!sendButton);
-                    
-                    if (!messageInput || !sendButton) {
-                        console.error('Critical elements missing!');
-                        return;
-                    }
-                    
-                    // Direct event listener for Enter key
-                    messageInput.addEventListener('keydown', function(event) {
-                        console.log('Keydown event:', event.key, 'Shift:', event.shiftKey);
-                        if (event.key === 'Enter' && !event.shiftKey) {
-                            console.log('Enter pressed - preventing default and sending message');
-                            event.preventDefault();
-                            event.stopPropagation();
-                            
-                            // Call sendMessage directly
-                            const message = messageInput.value.trim();
-                            console.log('Message to send:', message);
-                            if (message || uploadedFiles.length > 0) {
-                                sendMessage();
-                            } else {
-                                console.log('No message to send');
-                            }
-                        }
-                    });
-                    
-                    // Direct event listener for send button
-                    sendButton.addEventListener('click', function(event) {
-                        console.log('Send button clicked');
-                        event.preventDefault();
-                        event.stopPropagation();
-                        
-                        const message = messageInput.value.trim();
-                        console.log('Message to send:', message);
-                        if (message || uploadedFiles.length > 0) {
-                            sendMessage();
-                        } else {
-                            console.log('No message to send');
-                        }
-                    });
-                    
-                    // Focus the input when page loads
+                    // Test DOM elements
                     setTimeout(() => {
-                        messageInput.focus();
-                        console.log('Input focused and ready');
-                    }, 100);
-
-                    let currentTypingMessage = null;
-                    let typingTimeout = null;
-
+                        const messageInput = document.getElementById('messageInput');
+                        const sendButton = document.getElementById('sendButton');
+                        
+                        console.log('🔍 Looking for elements...');
+                        console.log('messageInput:', messageInput);
+                        console.log('sendButton:', sendButton);
+                        
+                        if (messageInput && sendButton) {
+                            console.log('✅ Elements found! Adding SIMPLE listeners...');
+                            
+                            messageInput.addEventListener('keydown', function(e) {
+                                console.log('🎹 KEY:', e.key);
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    console.log('🎯 ENTER DETECTED!');
+                                    e.preventDefault();
+                                    const text = messageInput.value.trim();
+                                    if (text && vscode) {
+                                        console.log('📤 SENDING:', text);
+                                        // Add user message to chat immediately
+                                        addMessageToChat('You', text, 'user');
+                                        // Send to backend
+                                        vscode.postMessage({ type: 'message', text: text });
+                                        messageInput.value = '';
+                                    }
+                                }
+                            });
+                            
+                            sendButton.addEventListener('click', function() {
+                                console.log('🖱️ BUTTON CLICKED!');
+                                const text = messageInput.value.trim();
+                                if (text && vscode) {
+                                    console.log('📤 SENDING:', text);
+                                    // Add user message to chat immediately
+                                    addMessageToChat('You', text, 'user');
+                                    // Send to backend
+                                    vscode.postMessage({ type: 'message', text: text });
+                                    messageInput.value = '';
+                                }
+                            });
+                            
+                            console.log('🎉 SIMPLE LISTENERS ADDED!');
+                        } else {
+                            console.error('❌ Elements not found!');
+                        }
+                    }, 500);
+                    
+                    // Simple message handler for VS Code communication
                     window.addEventListener('message', event => {
                         const message = event.data;
+                        console.log('📨 Received message:', message);
                         
-                        if (message.type === 'thinking') {
-                            // Show thinking indicator with animation
-                            const thinkingDiv = document.createElement('div');
-                            thinkingDiv.className = 'message ai thinking';
-                            thinkingDiv.innerHTML = \`
-                                <div class="message-header">
-                                    <div class="avatar">🤖</div>
-                                    <div class="name">Astrelium</div>
-                                    <div class="thinking-dots">
-                                        <span>.</span><span>.</span><span>.</span>
-                                    </div>
-                                </div>
-                                <div class="message-content">\${message.text}</div>
-                            \`;
-                            messagesContainer.appendChild(thinkingDiv);
-                            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                            currentTypingMessage = thinkingDiv;
-                            
-                        } else if (message.type === 'complete_response' || message.type === 'response') {
-                            // Remove thinking indicator if present
-                            if (currentTypingMessage) {
-                                currentTypingMessage.remove();
-                                currentTypingMessage = null;
-                            }
-                            
-                            // Add message with typing effect for better UX
-                            addMessage('Astrelium', message.text, 'ai', true);
+                        if (message.type === 'complete_response' || message.type === 'response') {
+                            console.log('🤖 Adding AI response to chat');
+                            addMessageToChat('Astrelium', message.text, 'ai');
                         }
                     });
                     
-                    // FINAL TEST: Add a simple working test
-                    console.log('🧪 FINAL TEST: Adding emergency fallback listeners');
-                    setTimeout(() => {
-                        const testInput = document.getElementById('messageInput');
-                        const testButton = document.getElementById('sendButton');
-                        
-                        if (testInput && testButton) {
-                            console.log('✅ Emergency test elements found!');
-                            
-                            // Emergency fallback test
-                            testInput.addEventListener('keyup', function(e) {
-                                console.log('🔥 EMERGENCY: Key detected:', e.key);
-                                if (e.key === 'Enter') {
-                                    console.log('🔥 EMERGENCY: Enter detected, trying to send...');
-                                    const msg = testInput.value.trim();
-                                    if (msg) {
-                                        console.log('🔥 EMERGENCY: Sending message:', msg);
-                                        vscode.postMessage({ type: 'message', text: msg });
-                                        testInput.value = '';
-                                    }
-                                }
-                            });
-                            
-                            testButton.addEventListener('click', function() {
-                                console.log('🔥 EMERGENCY: Button clicked!');
-                                const msg = testInput.value.trim();
-                                if (msg) {
-                                    console.log('🔥 EMERGENCY: Sending message:', msg);
-                                    vscode.postMessage({ type: 'message', text: msg });
-                                    testInput.value = '';
-                                }
-                            });
-                            
-                            console.log('🔥 EMERGENCY: Fallback listeners added!');
-                        } else {
-                            console.error('❌ EMERGENCY: Test elements not found!');
+                    // Clear chat function
+                    function clearChat() {
+                        const chatContainer = document.getElementById('chatContainer');
+                        if (chatContainer) {
+                            chatContainer.innerHTML = \`
+                                <div style="text-align: center; padding: 16px; opacity: 0.8;">
+                                    <div style="font-size: 32px; margin-bottom: 8px;">👨‍🚀</div>
+                                    <h3 style="margin: 0 0 4px 0; font-weight: 600; font-size: 15px;">Welcome to Astrelium</h3>
+                                    <p style="margin: 0; opacity: 0.7; font-size: 12px;">Your intelligent coding companion</p>
+                                    <div style="margin-top: 12px; padding: 8px; background: rgba(102, 126, 234, 0.1); border-radius: 6px; font-size: 10px; opacity: 0.8;">
+                                        <div style="margin-bottom: 4px; font-weight: 600;">🚀 I can help you:</div>
+                                        <div>• Create projects and write code</div>
+                                        <div>• Compile and test automatically</div>
+                                        <div>• Debug and fix errors</div>
+                                        <div>• Answer coding questions</div>
+                                    </div>
+                                </div>
+                            \`;
+                            console.log('🧹 Chat cleared');
                         }
-                    }, 1000);
+                    }
                     
-                    console.log('🎉 ASTRELIUM: Script initialization complete!');
+                    // Stub functions for buttons
+                    function toggleHistory() {
+                        console.log('📚 History feature - coming soon!');
+                    }
+                    
+                    function clearAllHistory() {
+                        console.log('🗑️ Clear all history - coming soon!');
+                    }
+                    
+                    console.log('🎉 MINIMAL VERSION READY!');
                 </script>
             </body>
             </html>`;

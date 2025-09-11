@@ -1,10 +1,22 @@
 # 🌌 Astrelium: Advanced AI Coding Assistant for VS Code
 
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Hammaduddin561/astrelium/main/assets/astronaut-logo.png" alt="Astrelium Logo" width="200"/>
+  <h3>Your intelligent coding companion</h3>
+</div>
+
+![Astrelium Interface](https://raw.githubusercontent.com/Hammaduddin561/astrelium/main/assets/astrelium-interface.jpg)
+
 Astrelium is a powerful, intelligent local-first coding assistant built as a VS Code extension. It connects to your own LLM (like `gpt-oss:20b` via Ollama) and provides comprehensive development capabilities including automated project creation, workspace analysis, code review, testing, debugging, and much more—all offline with no cloud dependencies.
 
 ---
 
 ## 🚀 Features
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Hammaduddin561/astrelium/main/assets/astrelium-interface.jpg" alt="Astrelium Chat Interface" width="600"/>
+  <p><em>Modern chat interface with intelligent code assistance</em></p>
+</div>
 
 ### 🧠 **Smart AI Assistant**
 - **Automated Project Creation**: Create complete projects with proper file structures, dependencies, and build configurations
@@ -97,6 +109,21 @@ Astrelium recognizes natural language commands for advanced operations:
 5. **Install Dependencies**: `cd astrelium && npm install`
 6. **Compile Extension**: `npm run compile`
 7. **Launch**: Press `F5` in VS Code to start Extension Development Host
+
+---
+
+## 📸 Screenshots
+
+<div align="center">
+  
+### 🌌 Welcome Interface
+<img src="https://raw.githubusercontent.com/Hammaduddin561/astrelium/main/assets/astronaut-logo.png" alt="Astrelium Logo" width="150"/>
+
+### 💬 Chat Interface
+<img src="https://raw.githubusercontent.com/Hammaduddin561/astrelium/main/assets/astrelium-interface.jpg" alt="Astrelium Chat Interface" width="500"/>
+<p><em>Astrelium's intuitive chat interface with modern design and intelligent responses</em></p>
+
+</div>
 
 ---
 
@@ -396,4 +423,24 @@ limitations under the License.
 
 ---
 
-**Enjoy coding with Astrelium! 🚀**
+## 📊 Project Stats
+
+![GitHub stars](https://img.shields.io/github/stars/Hammaduddin561/astrelium?style=social)
+![GitHub forks](https://img.shields.io/github/forks/Hammaduddin561/astrelium?style=social)
+![GitHub issues](https://img.shields.io/github/issues/Hammaduddin561/astrelium)
+![GitHub license](https://img.shields.io/github/license/Hammaduddin561/astrelium)
+![VS Code version](https://img.shields.io/badge/VS%20Code-%3E%3D1.80.0-blue)
+
+---
+
+<div align="center">
+  
+### 🚀 Ready to revolutionize your coding experience?
+
+<img src="https://raw.githubusercontent.com/Hammaduddin561/astrelium/main/assets/astronaut-logo.png" alt="Astrelium Astronaut" width="100"/>
+
+**Install Astrelium and unleash the power of local AI assistance!**
+
+*Built with ❤️ for developers who value privacy and performance*
+
+</div>

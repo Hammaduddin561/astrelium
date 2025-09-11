@@ -3,6 +3,11 @@
   "displayName": "Astrelium",
   "version": "0.0.1",
   "publisher": "mdhammaduddin",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hammaduddin561/astrelium.git"
+  },
+  "icon": "assets/astronaut-logo.png",
   "engines": {
     "vscode": "^1.80.0"
   },
