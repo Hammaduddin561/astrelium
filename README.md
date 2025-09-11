@@ -352,7 +352,15 @@ limitations under the License.
 - **Bug Reports**: [GitHub Issues](https://github.com/Hammaduddin561/astrelium/issues)
 - **Feature Requests & Ideas**: [GitHub Discussions](https://github.com/Hammaduddin561/astrelium/discussions)
 - **Questions & Help**: [GitHub Discussions Q&A](https://github.com/Hammaduddin561/astrelium/discussions/categories/q-a)
-- **Documentation**: [Wiki](https://github.com/Hammaduddin561/astrelium/wiki)
+
+## 📖 Documentation
+
+- **📚 Complete Guide**: [Wiki Home](https://github.com/Hammaduddin561/astrelium/wiki)
+- **🚀 Quick Start**: [Getting Started Guide](https://github.com/Hammaduddin561/astrelium/wiki/Quick-Start)
+- **📦 Installation**: [Setup Instructions](https://github.com/Hammaduddin561/astrelium/wiki/Installation-Guide)
+- **⚙️ Configuration**: [Settings & Options](https://github.com/Hammaduddin561/astrelium/wiki/Configuration)
+- **🛠️ Advanced Features**: [Power User Guide](https://github.com/Hammaduddin561/astrelium/wiki/Advanced-Features)
+- **🆘 Troubleshooting**: [Common Issues & Solutions](https://github.com/Hammaduddin561/astrelium/wiki/Troubleshooting)
 
 ---
 
